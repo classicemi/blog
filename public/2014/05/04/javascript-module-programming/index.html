@@ -1,0 +1,599 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>浅谈 JavaScript 模块化编程 | classicemi&#39;s blog</title>
+  <meta name="author" content="classicemi">
+  
+  <meta name="description" content="classicemi&#39;s blog front-end life 前端 生活">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="浅谈 JavaScript 模块化编程"/>
+  <meta property="og:site_name" content="classicemi&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon" type="image/x-icon">
+  <link rel="alternate" href="/atom.xml" title="classicemi&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">classicemi&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About Me</a></li>
+    
+    <li><a href="/atom.xml">RSS</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-05-04T04:14:28.000Z"><a href="/2014/05/04/javascript-module-programming/">May 4 2014</a></time>
+      
+      
+  
+    <h1 class="title">浅谈 JavaScript 模块化编程</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>JavaScript本身不是一种模块化语言，设计者在创造JavaScript之初应该也没有想到这么一个脚本语言的作用领域会越来越大。以前一个页面的JS代码再多也不会多到哪儿去，而现在随着越来越多的JavaScript库和框架的出现，Single-page App的流行以及Node.js的迅猛发展，如果我们还不对自己的JS代码进行一些模块化的组织的话，开发过程会越来越困难，运行性能也会越来越低。因此，了解JS模块化编程是非常重要的。</p>
+<a id="more"></a>
+
+<h2 id="简单的模块">简单的模块</h2>
+<p>什么是模块？我认为将不同功能的函数放在一起，组成一个能实现某种或某些特定功能的整体就是一个模块，因此这样：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">add</span><span class="params">(a, b)</span> {</span>
+  <span class="keyword">return</span> a + b;
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">divide</span><span class="params">(a, b)</span> {</span>
+  <span class="keyword">return</span> a / b;
+}
+</pre></td></tr></table></figure>
+
+<p>如此简单的两个函数就可以组成一个模块，这个模块可以进行一些数学运算。</p>
+<p>当然没有人会这么写模块。仅仅是从“型”上来看，两个函数分散在全局环境中，这也看不出模块的特点。模块存在于全局变量中，应该提供一个命名空间，成为模块内容的入口。那么我们可以将函数包裹在一个对象中：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre><span class="keyword">var</span> math = {
+  add: <span class="function"><span class="keyword">function</span><span class="params">(a, b)</span> {</span>
+    <span class="keyword">return</span> a + b;
+  },
+  divide: <span class="function"><span class="keyword">function</span><span class="params">(a, b)</span> {</span>
+    <span class="keyword">return</span> a / b;
+  }
+}
+</pre></td></tr></table></figure>
+
+<p>这样看起来似乎有模块的“型”了。但是这样还不完善，<code>math</code>中的所有成员都是对外暴露的，如果其中有一些变量不希望被修改的话那就有风险了。为了防止世界被破坏，为了维护私有变量不被修改，我们可以使用闭包。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="code"><pre><span class="keyword">var</span> math = (<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="keyword">var</span> _flag = <span class="number">0</span>;
+
+  <span class="keyword">return</span> {
+    add: <span class="function"><span class="keyword">function</span><span class="params">(a, b)</span> {</span>
+      <span class="keyword">return</span> a + b;
+    },
+    divide: <span class="function"><span class="keyword">function</span><span class="params">(a, b)</span> {</span>
+      <span class="keyword">return</span> a / b;
+    }
+  };
+})();
+</pre></td></tr></table></figure>
+
+<p>外部代码只能访问返回的<code>add</code>和<code>divide</code>方法，内部的<code>_flag</code>变量是不能访问的。关于创建对象的一些方法的解释，可以参考我的<a href="http://classicemi.github.io/2014/04/22/javascript-pattern-02/">另一篇博文</a>，里面有较详细的解释。</p>
+<p>利用自执行函数的特点，我们还可以很方便地为模块添加方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre><span class="keyword">var</span> math = (<span class="function"><span class="keyword">function</span><span class="params">(module)</span> {</span>
+  module.subtract = <span class="function"><span class="keyword">function</span><span class="params">(a, b)</span> {</span>
+    <span class="keyword">return</span> a - b;
+  }
+})(math);
+</pre></td></tr></table></figure>
+
+<p>模块在全局变量中的名称可能会与其他的模块产生冲突，例如<code>$</code>符号，虽然使用方便，但多个模块可能都会用它作为自己的简写，例如<a href="http://www.jquery.com/" target="_blank">jQuery</a>。我们可以在模块的组织代码中用<code>$</code>作为形参，将模块的全名变量作为参数传入，可起到防冲突的效果。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre><span class="keyword">var</span> math = (<span class="function"><span class="keyword">function</span><span class="params">($)</span> {</span>
+  <span class="comment">// 这里的$指的就是Math</span>
+})(math);
+</pre></td></tr></table></figure>
+
+<p>模块的构建思想便是通过这样的方式逐渐演化而来，下面将通过介绍一些JS模块化编程的标准来展示如何组织，管理和编写模块。</p>
+<h2 id="AMD_与_CMD"><code>AMD</code> 与 <code>CMD</code></h2>
+<p>在JavaScript模块化编程的世界中，有两个规范不得不提，它们分别是<a href="https://github.com/amdjs/amdjs-api/wiki/AMD/" target="_blank">AMD</a>和<a href="https://github.com/cmdjs/specification/blob/master/draft/module.md/" target="_blank">CMD</a>。现在的JS库或框架，凡是模块化的，一般都是遵循了这两个规范其中之一。</p>
+<h3 id="AMD（Asynchronous_Module_Definition）">AMD（Asynchronous Module Definition）</h3>
+<p><strong>CommonJS</strong><br>在说AMD之前，先要提一下<a href="http://wiki.commonjs.org/wiki/CommonJS" target="_blank">CommonJS</a>。CommonJS是为了弥补JavaScript标准库过少的缺点而产生的，由于JS没有模块机制（<a href="http://wiki.ecmascript.org/doku.php?id=harmony:specification_drafts" target="_blank">ES6</a>引入了模块系统，但浏览器全面支持估计还有好几年），CommonJS就帮助JS实现模块的功能。现在很热门的<a href="http://nodejs.org/" target="_blank">Node.js</a>就是CommonJS规范的一个实现。</p>
+<p>CommonJS在模块中定义方法要借助一个全局变量<code>exports</code>，它用来生成当前模块的API：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre><span class="comment">/* math module */</span>
+
+exports.add = <span class="function"><span class="keyword">function</span><span class="params">(a, b)</span> {</span>
+  <span class="keyword">return</span> a + b;
+};
+</pre></td></tr></table></figure>
+
+<p>要加载模块就要使用CommonJS的一个全局方法<code>require()</code>。加载之前实现的<code>math</code>模块像这样：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre><span class="keyword">var</span> math = <span class="built_in">require</span>(<span class="string">'math'</span>);
+</pre></td></tr></table></figure>
+
+<p>加载后<code>math</code>变量就是这个模块对象的一个引用，要调用模块中的方法就像调用普通对象的方法一样了：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre><span class="keyword">var</span> math = <span class="built_in">require</span>(<span class="string">'math'</span>);
+math.add(<span class="number">1</span>, <span class="number">3</span>);
+</pre></td></tr></table></figure>
+
+<p>总之，CommonJS就是一个模块加载器，可以方便地对JavaScript代码进行模块化管理。但它也有缺点，它在设计之初并没有完全为浏览器环境考虑，浏览器环境的特点是所有的资源，不考虑本地缓存的因素，都需要从服务器端加载，加载的速度取决于网络速度，而CommonJS的模块加载过程是同步阻塞的。也就是说如果<code>math</code>模块体积很大，网速又不好的时候，整个程序便会停止，等待模块加载完成。</p>
+<p>随着浏览器端JS资源的体积越来越庞大，阻塞给体验带来的不良影响也越来越严重，终于从，在CommonJS社区中有了不同的声音，<code>AMD</code>规范诞生了。</p>
+<p><strong>AMD</strong><br>它的特点便是异步加载，模块的加载不会影响其他代码的运行。所有依赖于某个模块的代码全部移到模块加载语句的回调函数中去。AMD的<code>require()</code>语句接受两个参数：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+</pre></td><td class="code"><pre><span class="comment">// require([module], callback)</span>
+<span class="built_in">require</span>([<span class="string">'math'</span>], <span class="function"><span class="keyword">function</span><span class="params">(math)</span> {</span>
+  math.add(<span class="number">1</span>, <span class="number">3</span>);
+});
+</pre></td></tr></table></figure>
+
+<p>在回调函数中，可以通过<code>math</code>变量引用模块。</p>
+<p>AMD规范也规定了模块的定义规则，使用<code>define()</code>函数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>define(id?, dependencies?, factory);
+</pre></td></tr></table></figure>
+
+<p>它接受三个参数：<br><em>id</em><br>这是一个可选参数，相当于模块的名字，加载器可通过id名加载对应的模块。如果没有提供id，加载器会将模块文件名作为默认id。</p>
+<p><em>dependencies</em><br>可选，接受一个数组参数，传入当前对象依赖的对象id。</p>
+<p><em>factory</em><br>回调函数，在依赖模块加载完成后会调用，它的参数是所有依赖模块的引用。回调函数的返回值就是当前对象的导出值。</p>
+<p>用AMD规范实现一个简单的模块可以这样：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="code"><pre>define(<span class="string">'foo'</span>, [<span class="string">'math'</span>], <span class="function"><span class="keyword">function</span><span class="params">(math)</span> {</span>
+  <span class="keyword">return</span> {
+    increase: <span class="function"><span class="keyword">function</span><span class="params">(x)</span> {</span>
+      <span class="keyword">return</span> math.add(x, <span class="number">1</span>);
+    }
+  };
+});
+</pre></td></tr></table></figure>
+
+<p>如果省去id和dependencies参数的话，就是一个完全的匿名模块。factory的参数将为默认值<code>require</code>，<code>exports</code>和<code>module</code>加载器将完全通过文件路径的方式加载模块，同时如果有依赖模块的话可通过<code>require</code>方法加载。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="code"><pre>define(<span class="function"><span class="keyword">function</span><span class="params">(require, exports, module)</span> {</span>
+  <span class="keyword">var</span> math = <span class="built_in">require</span>(<span class="string">'math'</span>);
+
+  exports.increase = <span class="function"><span class="keyword">function</span><span class="params">(x)</span> {</span>
+    <span class="keyword">return</span> math(x, <span class="number">1</span>);
+  };
+});
+</pre></td></tr></table></figure>
+
+<p>AMD规范也允许对加载进行一些配置，配置选项不是必须的，但灵活更改配置，会给开发带来一些方便。</p>
+<p><strong>baseUrl</strong> 以字符串形式规定根目录的路径，以后在加载模块时都会以该路径为标准。在浏览器中，工作目录的路径就是运行脚本的网页所在的路径。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>{
+  baseUrl: <span class="string">'./foo/bar'</span>
+}
+</pre></td></tr></table></figure>
+
+<p><strong>path</strong> 可以指定需加载模块的路径，模块名与路径以键-值对的方式写在对象中。如果一个模块有多个可选地址，可以将这些地址写在一个数组中。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre>{
+  path: {
+    <span class="string">'foo'</span>: <span class="string">'./bar'</span>
+  }
+}
+</pre></td></tr></table></figure>
+
+<p>关于模块路径的设置项还有<strong>packages</strong>，<strong>map</strong>。</p>
+<p><strong>shim</strong><br>对于某些没有按照AMD规范编写的模块，比如jQuery，来说，要使它们能被加载器加载，需要用<code>shim</code>方法为其配置一些属性。在<code>main</code>模块中，用<code>require.config()</code>方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="code"><pre><span class="built_in">require</span>.config({
+  shim: {
+    <span class="string">'jquery'</span>: {
+      exports: <span class="string">'$'</span>
+    },
+    <span class="string">'foo'</span>: {
+      deps: [
+        <span class="string">'bar'</span>,
+        <span class="string">'jquery'</span>
+      ],
+      exports: <span class="string">'foo'</span>
+    }
+  }
+});
+</pre></td></tr></table></figure>
+
+<p>之后再用加载器加载就可以了。</p>
+<p>目前实现了AMD规范的库有很多，比较有名的是<a href="http://requirejs.org/" target="_blank">Require.js</a>。</p>
+<h3 id="CMD（Common_Module_Definition）">CMD（Common Module Definition）</h3>
+<p>CMD在很多地方和AMD有相似之处，在这里我只说两者的不同点。</p>
+<p>首先，CMD规范和CommonJS规范是兼容的，相比AMD，它简单很多。遵循CMD规范的模块，可以在Node.js中运行。</p>
+<p><strong>define</strong><br>与AMD规范不同的是CMD规范中不使用<code>id</code>和<code>deps</code>参数，只保留<code>factory</code>。其中：<br>1.<code>factory</code>接收对象/字符串时，表明模块的接口就是对象/字符串。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>define({ <span class="string">'foo'</span>: <span class="string">'bar'</span> });
+
+define(<span class="string">'My name is classicemi.'</span>);
+</pre></td></tr></table></figure>
+
+<p><strong>define.cmd</strong><br>其值为一个空对象，用于判断页面中是否有CMD模块加载器。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre><span class="keyword">if</span> (<span class="keyword">typeof</span> define === <span class="string">'function'</span> && define.cmd) {
+  <span class="comment">// 使用CMD模块加载器编写代码</span>
+}
+</pre></td></tr></table></figure>
+
+<p><strong>require</strong><br>此函数同样用于获取模块接口。如需异步加载模块，使用<code>require.async</code>方法。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre>define(<span class="function"><span class="keyword">function</span><span class="params">(require, exports, module)</span> {</span>
+  <span class="built_in">require</span>.async(<span class="string">'math'</span>, <span class="function"><span class="keyword">function</span><span class="params">(math)</span> {</span>
+    math.add(<span class="number">1</span>, <span class="number">2</span>);
+  });
+});
+</pre></td></tr></table></figure>
+
+<p>我们可以发现，<code>require(id)</code>的写法和CommonJS一样是以同步方式加载模块。要像AMD规范一样异步加载模块则使用<code>define.async</code>方法。</p>
+<p><strong>exports</strong><br>此方法用于模块对外提供接口。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="code"><pre>define(<span class="function"><span class="keyword">function</span><span class="params">(require, exports, module)</span> {</span>
+  <span class="comment">// 对外提供foo属性</span>
+  exports.foo = <span class="string">'bar'</span>;
+
+  <span class="comment">// 对外提供add方法</span>
+  exports.add = <span class="function"><span class="keyword">function</span><span class="params">(a, b)</span> {</span>
+    <span class="keyword">return</span> a + b;
+  }
+});
+</pre></td></tr></table></figure>
+
+<p>提供接口的另一个方法是直接return包含接口键值对的对象：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre>define(<span class="function"><span class="keyword">function</span><span class="params">(require, exports, module)</span> {</span>
+  <span class="keyword">return</span> {
+    foo: <span class="string">'bar'</span>,
+    add: <span class="function"><span class="keyword">function</span><span class="params">(a, b)</span> {</span>
+      <span class="keyword">return</span> a + b;
+    }
+  }
+});
+</pre></td></tr></table></figure>
+
+<p>但是注意，不能用exports输出接口对象：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre>define(<span class="function"><span class="keyword">function</span><span class="params">(require, exports, module)</span> {</span>
+  exports = {
+    foo: <span class="string">'bar'</span>,
+    add: <span class="function"><span class="keyword">function</span><span class="params">(a, b)</span> {</span>
+      <span class="keyword">return</span> a + b;
+    }
+  }
+});
+</pre></td></tr></table></figure>
+
+<p><strong>这样写是错误的！</strong><br>替代方式是这样写：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre>define(<span class="function"><span class="keyword">function</span><span class="params">(require, exports, module)</span></span> {
+  <span class="built_in">module</span>.exports = {
+    foo: <span class="string">'bar'</span>,
+    add: <span class="function"><span class="keyword">function</span><span class="params">(a, b)</span></span> {
+      <span class="keyword">return</span> a + b;
+    }
+  }
+});
+</pre></td></tr></table></figure>
+
+<p>之前错误的原因是在<code>factory</code>内部，<code>exports</code>实际上是<code>module.exports</code>的一个引用，直接给<code>exports</code>赋值是不会改变<code>module.exports</code>的值的。</p>
+<p>在module对象上，除了有上面提到的<code>exports</code>以外，还有一些别的属性和方法。<br><strong>module.id</strong><br>模块的标识。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>define(<span class="string">'math'</span>, [], <span class="function"><span class="keyword">function</span><span class="params">(require, exports, module)</span> {</span>
+  <span class="comment">// module.id 的值为 math</span>
+});
+</pre></td></tr></table></figure>
+
+<p><strong>module.uri</strong><br>模块的绝对路径，由模块系统解析得到。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>define(<span class="function"><span class="keyword">function</span><span class="params">(require, exports, module)</span> {</span>
+  console.log(module.uri); <span class="comment">// http://xxx.com/path/</span>
+});
+</pre></td></tr></table></figure>
+
+<p><strong>module.dependencies</strong><br>值为一个数组，返回本模块的依赖。</p>
+<h2 id="Require-js_和_Sea-js">Require.js 和 Sea.js</h2>
+<p>之前在说AMD规范的时候提到了Require.js。它是AMD规范的代表性产品。另一个<a href="http://seajs.org/" target="_blank">Sea.js</a>在前端界也是赫赫有名了，CMD规范实际上就是它的产出。它们之间的区别也很能表现AMD和CMD规范之间的区别。</p>
+<p>AMD的依赖需要<strong>前置书写</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+</pre></td><td class="code"><pre>define([<span class="string">'foo'</span>, <span class="string">'bar'</span>], <span class="function"><span class="keyword">function</span><span class="params">(foo, bar)</span> {</span>
+  foo.add(<span class="number">1</span>, <span class="number">2</span>);
+  bar.subtract(<span class="number">3</span>, <span class="number">4</span>);
+});
+</pre></td></tr></table></figure>
+
+<p>CMD的依赖<strong>就近书写</strong>即可，不需要提前声明：<br>同步式：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="code"><pre>define(<span class="function"><span class="keyword">function</span><span class="params">(require, exports, module)</span> {</span>
+  <span class="keyword">var</span> foo = <span class="built_in">require</span>(<span class="string">'foo'</span>);
+  foo.add(<span class="number">1</span>, <span class="number">2</span>);
+  ...
+  <span class="keyword">var</span> bar = <span class="built_in">require</span>(<span class="string">'bar'</span>);
+  bar.subtract(<span class="number">3</span>, <span class="number">4</span>);
+});
+</pre></td></tr></table></figure>
+
+<p>异步式：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="code"><pre>define(<span class="function"><span class="keyword">function</span><span class="params">(require, exports, module)</span> {</span>
+  ...
+  <span class="built_in">require</span>.async(<span class="string">'math'</span>, <span class="function"><span class="keyword">function</span><span class="params">(math)</span> {</span>
+    math.add(<span class="number">1</span>, <span class="number">2</span>);
+  });
+  ...
+});
+</pre></td></tr></table></figure>
+
+<p>虽然AMD也可以用和CMD相似的方法，但不是官方推荐的。</p>
+<p>之前在介绍CMD的API时，我们可以发现其API职责专一，例如同步加载和异步加载的API都分为<code>require</code>和<code>require.async</code>，而AMD的API比较多功能。</p>
+<p>总而言之，引用玉伯的总结：</p>
+<ol>
+<li>Require.js同时适用于浏览器端和服务器环境的模块加载。Sea.js则专注于浏览器端的模块加载实现。通过Node扩展也可以运行于Node环境中。</li>
+<li>Require.js -&gt; AMD，Sea.js -&gt; CMD。</li>
+<li>RequireJS 在尝试让第三方类库修改自身来支持 RequireJS，目前只有少数社区采纳。Sea.js 不强推，采用自主封装的方式来“海纳百川”，目前已有较成熟的封装策略。</li>
+<li>Sea.js的调试工具比较完备，Require.js调试比较不方便。</li>
+<li>RequireJS 采取的是在源码中预留接口的形式，插件类型比较单一。Sea.js 采取的是通用事件机制，插件类型更丰富。</li>
+</ol>
+<p><em>怎么看都像是在自夸啊= =，当然它有这个资格</em></p>
+<h2 id="参考文献">参考文献</h2>
+<ol>
+<li><a href="http://wiki.commonjs.org/wiki/CommonJS" target="_blank">CommonJS官网</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2012/10/javascript_module.html" target="_blank">阮一峰博客</a></li>
+<li><a href="https://github.com/amdjs/amdjs-api/wiki/AMD" target="_blank">AMD Github</a></li>
+<li><a href="https://github.com/cmdjs/specification/blob/master/draft/module.md" target="_blank">CMD Github</a></li>
+<li><a href="http://seajs.org/" target="_blank">Sea.js</a></li>
+<li><a href="http://requirejs.org/" target="_blank">Require.js</a></li>
+</ol>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/前端/">前端</a>, <a href="/tags/JavaScript/">JavaScript</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <!-- 多说评论框 start -->
+  <div class="ds-thread" data-title="浅谈 JavaScript 模块化编程" data-url="http://classicemi.github.io/2014/05/04/javascript-module-programming/"></div>
+<!-- 多说评论框 end -->
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:classicemi.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
+  
+    <li><a href="/tags/css/">css</a><small>1</small></li>
+  
+    <li><a href="/tags/css3/">css3</a><small>1</small></li>
+  
+    <li><a href="/tags/兼容性/">兼容性</a><small>1</small></li>
+  
+    <li><a href="/tags/前端/">前端</a><small>12</small></li>
+  
+    <li><a href="/tags/学习笔记/">学习笔记</a><small>7</small></li>
+  
+    <li><a href="/tags/设计模式/">设计模式</a><small>7</small></li>
+  
+  </ul>
+</div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=1767982234&verifier=c2b9a5b2&dpc=1"></iframe>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 classicemi
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"classicemi"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+  <a href="https://github.com/classicemi"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/c6286ade715e9bea433b4705870de482a654f78a/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_white_ffffff.png"></a>
+</body>
+</html>

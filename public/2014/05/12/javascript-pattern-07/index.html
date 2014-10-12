@@ -1,0 +1,332 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>JavaScript 设计模式读书笔记(七)——适配器模式 | classicemi&#39;s blog</title>
+  <meta name="author" content="classicemi">
+  
+  <meta name="description" content="classicemi&#39;s blog front-end life 前端 生活">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="JavaScript 设计模式读书笔记(七)——适配器模式"/>
+  <meta property="og:site_name" content="classicemi&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon" type="image/x-icon">
+  <link rel="alternate" href="/atom.xml" title="classicemi&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">classicemi&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About Me</a></li>
+    
+    <li><a href="/atom.xml">RSS</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-05-12T12:14:28.000Z"><a href="/2014/05/12/javascript-pattern-07/">May 12 2014</a></time>
+      
+      
+  
+    <h1 class="title">JavaScript 设计模式读书笔记(七)——适配器模式</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="与门面模式的联系">与门面模式的联系</h2>
+<p>本文要说的适配器模式和上一篇门面模式在思想上有相似之处，所以放在一起说。它们都对类的接口进行了一些改变。门面模式是把相似的或是完成相关任务的接口进行组织，提供给用户一个更加简单易用，更适用于某种业务的接口。而适配器模式是要把一个接口转换为另一个接口，它不对接口的功能进行干涉，它不会简化接口，而是将接口变为更丰富且兼容的接口。</p>
+<p>简而言之，门面模式是让本来就可以用的接口变得更好用。而适配器是让不合适的接口变得合适。</p>
+<a id="more"></a>
+
+<h2 id="适配器的概念">适配器的概念</h2>
+<p>适配器的思想用线框图来表示就是这样：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre> +------+          +------+
+ |  某  |interface1|  适  | interface2
+ |  个--|----------|--配--|------------→
+ |  类  |          |  器  |
+ +------+          +------+
+</pre></td></tr></table></figure>
+
+<p>这个框图能让人想起什么？我想到了这个：<br><img src="/img/adapter.jpg" alt=""><br>将一个不能直接使用的耳机接头进行转换，成为可以使用的样子。</p>
+<p>假设一个类的方法是这样的：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre>orange.showInfo = <span class="function"><span class="keyword">function</span><span class="params">(name, color, weight)</span> {</span>
+  console.log(name + <span class="string">' is '</span> + color + <span class="string">' and its weight is '</span> + weight);
+};
+</pre></td></tr></table></figure>
+
+<p>而我们现有的对象都是这样</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre><span class="keyword">var</span> o = {
+  name: <span class="string">'classicemi'</span>,
+  color: <span class="string">'orange'</span>,
+  weight: <span class="string">'300g'</span>
+}
+</pre></td></tr></table></figure>
+
+<p>我们当然可以这样使用接口：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>orange.showInfo(o.name, o.color, o.weight);
+</pre></td></tr></table></figure>
+
+<p>同样，我们也可以：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">adaptedShowInfo</span><span class="params">(o)</span> {</span>
+  orange.showInfo(o.name, o.color, o.weight);
+}
+
+<span class="comment">// 通过适配过的接口进行调用</span>
+adaptedShowInfo(o);
+</pre></td></tr></table></figure>
+
+<p>这样，简化了接口的调用过程，对接口进行了一定程度的改造。</p>
+<h2 id="jQuery中的适配器">jQuery中的适配器</h2>
+<p>上面提到的适配器写法只是表现了适配器是一个什么样的东西，但实际项目中不会出现这样的代码。我们以jQuery中的一个API为例，说说实际应用中的适配器模式的使用方法。</p>
+<p>在jQuery样式相关的API中，最方便使用的就是<code>css()</code>了，这个接口是把<code>set</code>和<code>get</code>的功能合二为一了：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre><span class="comment">// 既可以像这样调用，取得opacity值</span>
+$(<span class="string">'.elem'</span>).css(<span class="string">'opacity'</span>);
+
+<span class="comment">// 也可以像这样，设置opacity值</span>
+$(<span class="string">'.elem'</span>).css({<span class="string">'opacity'</span>: <span class="string">'0.9'</span>});
+</pre></td></tr></table></figure>
+
+<p>这是怎么实现的呢，在jQuery核心代码中，与set/get opacity相关的代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+</pre></td><td class="code"><pre>jQuery.cssHooks.opacity = {
+  get: <span class="function"><span class="keyword">function</span><span class="params">( elem, computed )</span> {</span>
+    <span class="comment">// IE uses filters for opacity</span>
+    <span class="keyword">return</span> ropacity.test( (computed && elem.currentStyle ? elem.currentStyle.filter : elem.style.filter) || <span class="string">""</span> ) ?
+      ( <span class="number">0.01</span> * <span class="built_in">parseFloat</span>( <span class="built_in">RegExp</span>.$<span class="number">1</span> ) ) + <span class="string">""</span> :
+      computed ? <span class="string">"1"</span> : <span class="string">""</span>;
+  },
+
+  set: <span class="function"><span class="keyword">function</span><span class="params">( elem, value )</span> {</span>
+    <span class="keyword">var</span> style = elem.style,
+      currentStyle = elem.currentStyle,
+      opacity = jQuery.isNumeric( value ) ? <span class="string">"alpha(opacity="</span> + value * <span class="number">100</span> + <span class="string">")"</span> : <span class="string">""</span>,
+      filter = currentStyle && currentStyle.filter || style.filter || <span class="string">""</span>;
+
+    <span class="comment">// IE has trouble with opacity if it does not have layout</span>
+    <span class="comment">// Force it by setting the zoom level</span>
+    style.zoom = <span class="number">1</span>;
+
+    <span class="comment">// if setting opacity to 1, and no other filters exist - attempt to remove filter attribute #6652</span>
+    <span class="comment">// if value === "", then remove inline opacity #12685</span>
+    <span class="keyword">if</span> ( ( value &gt;= <span class="number">1</span> || value === <span class="string">""</span> ) &&
+        jQuery.trim( filter.replace( ralpha, <span class="string">""</span> ) ) === <span class="string">""</span> &&
+        style.removeAttribute ) {
+
+      <span class="comment">// Setting style.filter to null, "" & " " still leave "filter:" in the cssText</span>
+      <span class="comment">// if "filter:" is present at all, clearType is disabled, we want to avoid this</span>
+      <span class="comment">// style.removeAttribute is IE Only, but so apparently is this code path...</span>
+      style.removeAttribute( <span class="string">"filter"</span> );
+
+      <span class="comment">// if there is no filter style applied in a css rule or unset inline opacity, we are done</span>
+      <span class="keyword">if</span> ( value === <span class="string">""</span> || currentStyle && !currentStyle.filter ) {
+        <span class="keyword">return</span>;
+      }
+    }
+
+    <span class="comment">// otherwise, set new filter values</span>
+    style.filter = ralpha.test( filter ) ?
+      filter.replace( ralpha, opacity ) :
+      filter + <span class="string">" "</span> + opacity;
+  }
+};
+</pre></td></tr></table></figure>
+
+<p>通过对传入参数的适配，实现不同的功能。因为不看参数的话，调用的方式是完全一样的。那么从参数下手，通过校验参数的形式，确定用户要实现的功能。</p>
+<h2 id="适配器模式的适用场景">适配器模式的适用场景</h2>
+<p>适配器不会去改变实现层，那不属于它的职责范围，它干涉了抽象的过程。外部接口的适配能够让同一个方法适用于多种系统。</p>
+<p>如果内部的实现出现了问题，需要动手术解决的话，那就不应该使用适配器了，因为那只是治标不治本的方法，反而会增加代码的复杂度。对实现进行全面优化的带来的是真正的改善。而如果实现层的问题不大，要解决一部分适配问题的话，适配器模式就是很好的选择了。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/前端/">前端</a>, <a href="/tags/JavaScript/">JavaScript</a>, <a href="/tags/学习笔记/">学习笔记</a>, <a href="/tags/设计模式/">设计模式</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <!-- 多说评论框 start -->
+  <div class="ds-thread" data-title="JavaScript 设计模式读书笔记(七)——适配器模式" data-url="http://classicemi.github.io/2014/05/12/javascript-pattern-07/"></div>
+<!-- 多说评论框 end -->
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:classicemi.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
+  
+    <li><a href="/tags/css/">css</a><small>1</small></li>
+  
+    <li><a href="/tags/css3/">css3</a><small>1</small></li>
+  
+    <li><a href="/tags/兼容性/">兼容性</a><small>1</small></li>
+  
+    <li><a href="/tags/前端/">前端</a><small>12</small></li>
+  
+    <li><a href="/tags/学习笔记/">学习笔记</a><small>7</small></li>
+  
+    <li><a href="/tags/设计模式/">设计模式</a><small>7</small></li>
+  
+  </ul>
+</div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=1767982234&verifier=c2b9a5b2&dpc=1"></iframe>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 classicemi
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"classicemi"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+  <a href="https://github.com/classicemi"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/c6286ade715e9bea433b4705870de482a654f78a/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_white_ffffff.png"></a>
+</body>
+</html>

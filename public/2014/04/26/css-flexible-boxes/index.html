@@ -1,0 +1,386 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>使用 CSS3 Flexible Boxes 布局 | classicemi&#39;s blog</title>
+  <meta name="author" content="classicemi">
+  
+  <meta name="description" content="classicemi&#39;s blog front-end life 前端 生活">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="使用 CSS3 Flexible Boxes 布局"/>
+  <meta property="og:site_name" content="classicemi&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon" type="image/x-icon">
+  <link rel="alternate" href="/atom.xml" title="classicemi&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">classicemi&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About Me</a></li>
+    
+    <li><a href="/atom.xml">RSS</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-04-26T12:51:28.000Z"><a href="/2014/04/26/css-flexible-boxes/">Apr 26 2014</a></time>
+      
+      
+  
+    <h1 class="title">使用 CSS3 Flexible Boxes 布局</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Flexible Box是什么？Flexible意为可伸缩的，Box意为盒子，可以理解为一种新式的盒模型——<strong>伸缩盒模型</strong>。由<a href="http://www.w3.org/TR/2014/WD-css-flexbox-1-20140325/" target="_blank">CSS3规范</a>提出，这是在原有的大家非常熟悉的<code>block</code>, <code>inline-block</code>, <code>inline</code>的基础上延伸出的新一代布局模式。</p>
+<h2 id="浏览器兼容性">浏览器兼容性</h2>
+<p>作为非常现实的开发者，是否对一个新技术进行关注，首先要考虑它的浏览器兼容性如何。我们的伸缩盒模型的浏览器兼容性看起来还是相当不错的。</p>
+<a id="more"></a>
+
+<p><img src="/img/flexible-box-compatibility.jpg" alt=""><br>可以看到，现代浏览器基本上都支持了，IE10开始也支持了（IE和Safari分别加<code>-ms-</code>和<code>-webkit-</code>前缀即可），移动端的支持情况也比较良好，唯一不支持的平台只有Opera了，咱不带他玩→_→</p>
+<p>因此，奥巴马同志说：伸缩盒模型是好的，有前途的。（嗯嗯~）</p>
+<h2 id="伸缩盒基本概念">伸缩盒基本概念</h2>
+<p>伸缩盒的最大特点或者说优点就在于它考虑到了现今高昂的房价和人民日益增长的住宅需求之间的矛盾，房屋面积是有限的，但是我们的伸缩盒能够最合理最高效地把房子分给大家。面积多了，就给大家伙多分点；面积小了，就让各位挤一挤少分点，总而言之不会让任何一个人<strong>露宿街头</strong>的（overflow）！</p>
+<p>既然我们提到了房子和住户的关系，那么住户的排列自然需要沿一定的方向。对于块级元素来说，布局的延伸方向是自上而下的，也就是纵向。而对于行内元素来说，布局延伸方向是自左往右的，也就是横向。而伸缩盒呢，它的方向是可变的，既能纵向延伸，也能横向舒展，这取决于你的设置了。</p>
+<h3 id="伸缩盒模型基本术语">伸缩盒模型基本术语</h3>
+<p>伸缩盒模型的思想和普通的块级元素和行内元素的布局思想有较大的不同，它引入了一些新的概念和术语，通过下面这张图来了解一下：<br><img src="/img/flex_terms.png" alt=""></p>
+<p><strong>Flex container 伸缩盒容器</strong><br>这就是用来分的房子，这是一间神奇的房子，要让它变得神奇，将<code>display</code>属性声明为<code>flex</code>或<code>inline-flex</code>即可~</p>
+<p><strong>Flex item 伸缩项</strong><br>房子里的居民，他们都会占有自己应得的住房面积。</p>
+<p>为了形象说明，我们用代码来解释。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre><span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"container"</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"item item-1"</span>&gt;</span>item 1<span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"item item-2"</span>&gt;</span>item 2<span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"item item-3"</span>&gt;</span>item 3<span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+</pre></td></tr></table></figure>
+
+<p>CSS设置为：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+</pre></td><td class="code"><pre>.container {
+  display: flex;
+  width: 300px;
+  height: 100px;
+  ...
+}
+</pre></td></tr></table></figure>
+
+<p><strong>在这里<code>display: inline-flex;</code>好像也可以。</strong><br>对于其中的伸缩项元素，我们需要给他们事先安排好住房面积比例，我们就用最简单最健康的1:1:1吧~我们将比例声明在<code>flex</code>属性里</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="code"><pre>.item-1 {
+  flex: 1;
+  ...
+}
+.item-2 {
+  flex: 1;
+  ...
+}
+.item-3 {
+  flex: 1;
+  ...
+}
+</pre></td></tr></table></figure>
+
+<p>Voilà!<br><img src="/img/flex-items.jpg" alt=""><br>我们的大房子被完美地平分成三个隔间了，三家平分房租！</p>
+<p>如果有人想住大点的房子，我们直接改变<code>flex</code>的比例即可：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="code"><pre>.item-1 {
+  flex: 1;
+  ...
+}
+.item-2 {
+  flex: 1;
+  ...
+}
+.item-3 {
+  flex: 2;
+  ...
+}
+</pre></td></tr></table></figure>
+
+<p><img src="/img/flex-items2.jpg" alt=""><br>是不是很方便？</p>
+<p><strong>Axes 轴</strong><br>我们可以看到，图中有两条轴，分别标注了<strong>主轴</strong>和<strong>次轴</strong>（垂直于主轴）。然而实际上哪一条是主轴并不确定，是由我们来规定的。</p>
+<ul>
+<li><code>flex-direction</code> 此属性规定哪条轴为主轴。</li>
+<li><code>justify-content</code> 此属性设置了伸缩项在主轴方向上的排列方式，这个稍后解释。</li>
+<li><code>align-items</code> 此属性和上面的<code>justify-content</code>相对，表示伸缩项在次轴上的排列方式。</li>
+<li><code>align-self</code> 此属性规定某一个特定的伸缩项元素在次轴上的布局方式，在某个元素上设置该属性会覆盖它的<code>align-items</code>属性。也就是这个属性会让某个元素更有个性，不走寻常路~</li>
+</ul>
+<p><strong>flex-direction</strong><br>当我们不想沿着默认的方向分房子的时候，我们可以改变<code>flex-direction</code>属性的值来改变主轴和方向，该属性默认的取值为row；</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+</pre></td><td class="code"><pre>.container {
+  flex: row-reverse;
+  ...
+}
+</pre></td></tr></table></figure>
+
+<p>顾名思义，这会让伸缩项的排列方向反过来：<br><img src="/img/flex-items-row-reverse.jpg" alt=""><br>当此属性设置为<code>column</code>时，主次轴就会对调，元素的排列方向也会随之改变：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+</pre></td><td class="code"><pre>.container {
+  flex-direction: column;
+  ...
+}
+</pre></td></tr></table></figure>
+
+<p><img src="/img/flex-items-column.jpg" alt=""><br>至于<code>flex: column-reverse</code>的含义就不用我多说了吧~</p>
+<p><strong>justify-contents</strong><br>有的时候，大家挨着住，一点空隙都没有也会很难受，连个过道都没有，隐私也不能保证对吧。这个时候，我们可以改变分配政策了，不再按比例分配，而是定额分配，每个人的面积是确定的。多出的房屋面积改成公共区域。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre>.item {
+  width: 80px;
+  ...
+}
+...
+</pre></td></tr></table></figure>
+
+<p><strong>设定了<code>width</code>属性后也要记得去掉<code>flex</code>属性的声明哦，不然<code>flex</code>属性的效果仍然会把<code>width</code>覆盖掉~</strong><br><strong>同时，如果<code>width</code>属性也不设定的话，元素宽度会表现为内容的宽度，which means 当伸缩项内部无内容时，将不会进行渲染，其表现就和<code>display: none;</code>一样。</strong><br>这时，在容器上声明<code>justify-content</code>属性就可以安排伸缩项的位置了：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre><span class="class">.content</span> <span class="rules">{
+  <span class="rule"><span class="attribute">justify-content</span>:<span class="value"> flex-start | flex-end | center | space-between | space-around</span></span>;
+<span class="rule">}</span></span>
+</pre></td></tr></table></figure>
+
+<p><img src="/img/justify-content.png" alt=""></p>
+<p><strong>align-items</strong><br>这项属性会改变次轴上元素排列的方式，对于本例来说原来次轴方向上元素的高度是表现为<code>height: 100%;</code>的，设定了<code>align-items</code>属性后，其高度表现就会发生改变了。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre><span class="class">.content</span> <span class="rules">{
+  <span class="rule"><span class="attribute">align-items</span>:<span class="value"> flex-start | flex-end | center | baseline | stretch</span></span>;
+<span class="rule">}</span></span>
+</pre></td></tr></table></figure>
+
+<p>说到这里了，伸缩项具体的表现其实可以想象出来了，想象不出来的就自己动手试一试吧~</p>
+<p><strong>order</strong><br>在伸缩项上声明此属性，可以无视HTML结构的顺序而按照<code>order</code>从小到大的顺序沿<code>flex-direction</code>方向排列。比如：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="code"><pre>.item-1 {
+  order: 3;
+  ...
+}
+.item-2 {
+  order: 1;
+  ...
+}
+.item-3 {
+  order: 2;
+  ...
+}
+</pre></td></tr></table></figure>
+
+<p><img src="/img/order.jpg" alt=""></p>
+<p><strong>flex-wrap</strong><br>此属性的默认值为<code>nowrap</code>，也就是忽略伸缩项的宽度，管你要多少住房面积，通通按照<code>flex</code>属性说好的分配，不许换行。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="code"><pre><span class="class">.container</span> <span class="rules">{
+  <span class="rule"><span class="attribute">flex-wrap</span>:<span class="value"> nowrap | wrap | wrap-reverse
+</span></span></span>}
+
+<span class="class">.item</span> <span class="rules">{
+  <span class="rule"><span class="attribute">width</span>:<span class="value"> <span class="number">150</span>px</span></span>;
+<span class="rule">}</span></span>
+</pre></td></tr></table></figure>
+
+<p><img src="/img/flex-wrap.jpg" alt=""></p>
+<p><strong>flex-grow，flex-shrink和flex-basis</strong><br>上文提到的<code>flex</code>属性实际上是这三个属性的简写形式。这三个属性有相似性，都是表示项与项之间分配空间的相对比例关系，不同之处在于：</p>
+<ul>
+<li><code>flex-grow</code>属性：属性值为该伸缩项所占空间相对于其他伸缩项（声明了<code>flex</code>相关属性的项）的比值。</li>
+<li><code>flex-shrink</code>属性：该伸缩项相对于其他伸缩项缩小的比值，也就是说当<code>flex-shrink: 3;</code>时，该项所占空间为其他项的1/3。</li>
+<li><code>flex-basis</code>属性：属性值为该项所占空间占容器空间的百分比。</li>
+</ul>
+<p><strong>注意：</strong>对于<code>flex-basis</code>属性，当所有项的属性值相加&lt;=100%时，会严格按照百分比值来渲染。当属性值相加&gt;100%时，元素并不会溢出，而是表现为两两之间所占空间大小遵循相互的百分比比值。也就是说当存在三个伸缩项且<code>flex-basis</code>值都为<code>50%</code>时，表现行为与三个项均为<code>flex: 1;</code>一样。</p>
+<p><strong>Flexible Boxes</strong>布局模式在响应式开发中尤其好用，对不同的终端，设置元素之间的空间分配关系将会变成一件非常简单的事。伸缩盒布局和响应式布局中流行的流体布局哪种更好，还是可以结合起来，就看各位开发者发挥自己的聪明才智了！</p>
+<h2 id="参考文献">参考文献</h2>
+<ol>
+<li><a href="http://www.w3.org/TR/2014/WD-css-flexbox-1-20140325/" target="_blank">http://www.w3.org/TR/2014/WD-css-flexbox-1-20140325/</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/flex" target="_blank">https://developer.mozilla.org/en-US/docs/Web/CSS/flex</a></li>
+<li><a href="http://www.zhangxinxu.com/wordpress/?p=1338" target="_blank">http://www.zhangxinxu.com/wordpress/?p=1338</a></li>
+</ol>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/前端/">前端</a>, <a href="/tags/css/">css</a>, <a href="/tags/css3/">css3</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <!-- 多说评论框 start -->
+  <div class="ds-thread" data-title="使用 CSS3 Flexible Boxes 布局" data-url="http://classicemi.github.io/2014/04/26/css-flexible-boxes/"></div>
+<!-- 多说评论框 end -->
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:classicemi.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
+  
+    <li><a href="/tags/css/">css</a><small>1</small></li>
+  
+    <li><a href="/tags/css3/">css3</a><small>1</small></li>
+  
+    <li><a href="/tags/兼容性/">兼容性</a><small>1</small></li>
+  
+    <li><a href="/tags/前端/">前端</a><small>12</small></li>
+  
+    <li><a href="/tags/学习笔记/">学习笔记</a><small>7</small></li>
+  
+    <li><a href="/tags/设计模式/">设计模式</a><small>7</small></li>
+  
+  </ul>
+</div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=1767982234&verifier=c2b9a5b2&dpc=1"></iframe>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 classicemi
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"classicemi"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+  <a href="https://github.com/classicemi"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/c6286ade715e9bea433b4705870de482a654f78a/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_white_ffffff.png"></a>
+</body>
+</html>

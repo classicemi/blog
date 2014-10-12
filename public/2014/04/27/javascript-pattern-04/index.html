@@ -1,0 +1,670 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>JavaScript 设计模式读书笔记(四)——单体模式和链式调用 | classicemi&#39;s blog</title>
+  <meta name="author" content="classicemi">
+  
+  <meta name="description" content="classicemi&#39;s blog front-end life 前端 生活">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="JavaScript 设计模式读书笔记(四)——单体模式和链式调用"/>
+  <meta property="og:site_name" content="classicemi&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon" type="image/x-icon">
+  <link rel="alternate" href="/atom.xml" title="classicemi&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">classicemi&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About Me</a></li>
+    
+    <li><a href="/atom.xml">RSS</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-04-27T04:38:28.000Z"><a href="/2014/04/27/javascript-pattern-04/">Apr 27 2014</a></time>
+      
+      
+  
+    <h1 class="title">JavaScript 设计模式读书笔记(四)——单体模式和链式调用</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="设计模式分类">设计模式分类</h2>
+<p>接下来就正式进入设计模式的介绍了，JavaScript设计模式有很多</p>
+<h2 id="单体模式">单体模式</h2>
+<p>在多种Javascript设计模式中，<strong>单体模式</strong>是最简单，也是最基础的设计模式。它基础到似乎不太像是一种设计模式，因为我们在编写代码的过程中随时都会用到，并不需要过多思考，这是它简单的一面。同时，它不仅可以单独存在，甚至也可以成为其他较高级设计模式的组成部分，这也是为什么说它基础的原因。</p>
+<a id="more"></a>
+
+<h3 id="基本结构">基本结构</h3>
+<p>既然说了单体模式是非常简单的，它的结构也是很简单的。最简单的单体结构实际上就是一个对象字面量：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="code"><pre><span class="keyword">var</span> Singleton = {
+  attribute1: <span class="literal">true</span>,
+  attribute2: <span class="number">1</span>,
+
+  method1: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    ...
+  },
+  method2: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    ...
+  }
+}
+</pre></td></tr></table></figure>
+
+<p>这就是一个基本的单体结构了。</p>
+<p>但是，不是任何对象字面量都可以被称作为单体结构的，单体结构应该是一个只能被实例化一次，并且可以通过一个访问点访问的类。所谓访问点，可以理解为一个变量，这个变量在全局范围内可以访问到，并且只有一个。</p>
+<h3 id="单体结构的作用">单体结构的作用</h3>
+<p>那么单体结构的作用是什么呢，难道只是用来创建一个实例化的对象这么简单吗？</p>
+<p><strong>命名空间</strong><br>当然不是的，单体最显而易见的作用就是划分命名空间。单体结构在页面中有一个访问点，那么单体中保存的所有属性和方法也就可以从这个访问点访问了，通过点运算符的形式。而且也只有通过访问点才可以访问到。Javascript中的所有变量都是可以被改写的，当一个程序员维护多个变量的时候，如果不将他们归类到命名空间中去的话，一旦变量被修改，查找起来将非常麻烦。同时，一个命名良好的命名空间名称也可以提醒其他的程序员不要随便修改其中的变量。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+</pre></td><td class="code"><pre><span class="keyword">var</span> Classicemi = {
+  setName: <span class="function"><span class="keyword">function</span><span class="params">(name)</span> {</span>
+    ...
+  },
+  <span class="comment">// 其他方法</span>
+}
+</pre></td></tr></table></figure>
+
+<p>在其他地方访问<code>setName</code>方法的时候，一定要通过<code>Classicemi.setName</code>才能访问的到，这可以提醒其他程序员这个方法的作用和声明的地点。通过命名空间将相似的方法组合到一起也可以增加代码的文档性。另一方面，网页上的Javascript代码会根据其用途有不同的划分，分不同的人来维护。例如JS库代码，广告代码等。为了避免彼此之间产生冲突，在全局对象中也可以给不同用途的代码划分各自的命名空间，也就是存到各个单体中。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="code"><pre><span class="keyword">var</span> Classicemi = {};
+
+Classicemi.Common = {
+  ...
+};
+
+Classicemi.ErrorCodes = {
+  ...
+};
+</pre></td></tr></table></figure>
+
+<p><strong>网页专用代码包装器</strong><br>这是单体常见用法的一个示例。<br>在一个网站中，有些Javascript代码是整个网站都要用到的，比如框架，库等。而有些代码是特定的网页才会用到，例如对一个页面中的DOM元素添加事件监听等。一般我们会通过给页面的<code>load</code>事件创建一个<code>init</code>方法来对所有需要的操作进行初始化，将所有的初始化代码放在一个方法中。<br>比如含有一个表单的页面，我们要取消submit的默认行为并添加ajax交互。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+</pre></td><td class="code"><pre>Classicemi.RegPage = {
+  FORM_ID: <span class="string">'reg-form'</span>,
+  OUTPUT_ID: <span class="string">'reg-results'</span>,
+
+  <span class="comment">// 表单处理方法</span>
+  handleSubmit: <span class="function"><span class="keyword">function</span><span class="params">(e)</span> {</span>
+    e.preventDefult();
+    ...
+  } ,
+  sendRegistration: <span class="function"><span class="keyword">function</span><span class="params">(data)</span> {</span>
+    ... <span class="comment">// 发送XHR请求</span>
+  },
+  ...
+
+  <span class="comment">// 初始化方法</span>
+  init: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    Classicemi.RegPage.formEl = $(Classicemi.RegPage.FORM_ID);
+    Classicemi.RegPage.outputEl = $(Classicemi.RegPage.OUTPUT_ID);
+
+    addEvent(Classicemi.RegPage.FormEl, <span class="string">'submit'</span>, Classicemi.RegPage.handleSubmit); <span class="comment">// 添加事件</span>
+  }
+};
+
+<span class="comment">// 页面加载后运行初始化方法</span>
+addLoadEvent(Classicemi.PageName.init);
+</pre></td></tr></table></figure>
+
+<p>这样处理之后，对于不支持XHR的老式浏览器，可以按照原有方式发送表单数据并刷新页面。而现代浏览器中则可以阻止表单提交的默认行为，改由ajax对页面进行部分刷新，提供更好的用户体验。</p>
+<h3 id="在单体中表示私用成员">在单体中表示私用成员</h3>
+<p>对象中有时候有些属性和方法是需要进行保护，避免被修改的，这些成员称为私用成员。在单体中声明私用成员也是保护变量的一个好方法，另外，单体中创建私用成员的另一个好处在于由于单体只会被实例化一次，定义私用成员的时候就不用过多考虑内存浪费的问题。</p>
+<p><strong>伪私用成员（下划线表示法）</strong><br>通过特殊命名的变量来提醒其他开发者不要直接访问对象成员的方法。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="code"><pre>Classicemi.Singleton = {
+  <span class="comment">// 私用成员</span>
+  _privateMethod: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    ...
+  },
+
+  <span class="comment">// 公开成员</span>
+  publicMethod: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    ...
+  }
+}
+</pre></td></tr></table></figure>
+
+<p>在该单体的方法中，可以通过<code>this</code>访问其他方法，但这会有一定的风险，因为在特殊情况下<code>this</code>不一定指向该单体。因此还是将调用名称写全是最安全的做法。</p>
+<p><strong>使用闭包</strong><br>加下划线的方法毕竟是假的，使用闭包才能创建真正意义上的私用成员。我们知道Javascript只存在函数作用域，因此要利用闭包的特性就不能使用对象字面量的形式，而要通过构造函数返回来实现单体对象的创建了。第一步，我们通过一个构造函数返回一个空对象，这就是单体对象的初始化：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+</pre></td><td class="code"><pre><span class="keyword">var</span> Classicemi.Singleton = (<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="keyword">return</span> {};
+})();
+</pre></td></tr></table></figure>
+
+<p>我们通过一个自执行构造函数返回单体对象的实例，下面就可以在这个构造函数中添加我们需要的私用对象了。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="code"><pre><span class="keyword">var</span> Classicemi.Singleton = (<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="comment">// 私用属性</span>
+  <span class="keyword">var</span> privateAttribute = <span class="literal">true</span>;
+
+  <span class="comment">// 私用方法</span>
+  <span class="function"><span class="keyword">function</span> <span class="title">privateMethod</span><span class="params">()</span> {</span>
+    ...
+  }
+  <span class="keyword">return</span> {};
+})();
+</pre></td></tr></table></figure>
+
+<p>可以公开访问的公开属性和方法可以写在构造函数返回的对象中：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="code"><pre><span class="keyword">var</span> Classicemi.Singleton = (<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="comment">// 私用属性</span>
+  <span class="keyword">var</span> privateAttribute = <span class="literal">true</span>;
+
+  <span class="comment">// 私用方法</span>
+  <span class="function"><span class="keyword">function</span> <span class="title">privateMethod</span><span class="params">()</span> {</span>
+    ...
+  }
+  <span class="keyword">return</span> {
+    publicAttribute: <span class="literal">false</span>,
+
+    publicMethod: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+      ...  
+    }
+  };
+})();
+</pre></td></tr></table></figure>
+
+<p>这就是用闭包创建私有成员的方法，这种单体模式又被成为<strong>模块模式（Module Pattern）</strong>，我们创建的单体可以作为模块，对代码进行组织，并划分命名空间。</p>
+<p>和之前说到的下划线表示私用成员方法比较起来，最大的优点就是可以创建真正的私用成员，使其不会在构造函数之外被随意修改。同时，由于单体只会被实例化一次，不用担心内存浪费的问题。单体模式是Javascript中最简单，最流行的模式之一。</p>
+<h3 id="惰性实例化单体">惰性实例化单体</h3>
+<p>单体一般会在页面加载过程中进行实例化，如果单体的体积比较大的话，可能会对加载速度造成影响。对于体积比较大，在页面加载时也暂时不会起作用的单体，我们可以通过<strong>惰性加载（lazy loading）</strong>的方式进行实例化，也就是在需要的时候再进行实例化。</p>
+<p>要实现惰性加载，我们要借助一个静态方法来实现。在单体的命名空间中，我们声明这样一个方法<code>getInstance()</code>。这个方法会对单体是否已经进行了实例化进行检测，如果还没有实例，则会创建并返回实例。如果已经实例化过了，则会返回现有实例。</p>
+<p>实现惰性加载，我们要把原单体构造函数中的所有成员转移到一个内部的新构造函数中去：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="code"><pre>Classicemi.Singleton = (<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="function"><span class="keyword">function</span> <span class="title">constructor</span><span class="params">()</span> {</span>
+    <span class="comment">// 私用属性</span>
+    <span class="keyword">var</span> privateAttribute = <span class="literal">true</span>;
+
+    <span class="comment">// 私用方法</span>
+    <span class="function"><span class="keyword">function</span> <span class="title">privateMethod</span><span class="params">()</span> {</span>
+      ...
+    }
+    <span class="keyword">return</span> {
+      publicAttribute: <span class="literal">false</span>,
+
+      publicMethod: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+        ...  
+      }
+    };
+  }
+})();
+</pre></td></tr></table></figure>
+
+<p>这个内嵌构造函数不能从闭包外部访问，那么在闭包内部返回对象中的<code>getInstance</code>方法可以有访问<code>constructor</code>方法的特权，可以保证<code>constructor</code>方法只会被我们控制。</p>
+<p>在<code>getInstance()</code>方法内部，首先要对单体是否已经实例化进行检查，如果已经实例化过，就将其返回。如果没有实例化，就调用<code>constructor</code>方法。我们需要一个变量来保存实例化后的单体。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="code"><pre>Classicemi.Singleton = (<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="keyword">var</span> uniqueInstance; <span class="comment">// 保存实例化后的单体</span>
+
+  <span class="function"><span class="keyword">function</span> <span class="title">constructor</span><span class="params">()</span> {</span>
+    ...
+  }
+
+  <span class="keyword">return</span> {
+    getInstance: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+      <span class="keyword">if</span> (!uniqueInstance) {
+        uniqueInstance = constructor();
+      }
+      <span class="keyword">return</span> uniqueInstance;
+    }
+  }
+})();
+</pre></td></tr></table></figure>
+
+<p>单体的构造函数像这样被改写后，调用其方法的代码就要由这样：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>Classicemi.Singleton.publicMethod();
+</pre></td></tr></table></figure>
+
+<p>改写为：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>Classicemi.Singleton.getInstance().publicMethod();
+</pre></td></tr></table></figure>
+
+<p>惰性加载的使用可以避免不必要的单体在页面加载时实例化影响加载速度，但引入一个<code>getInstance()</code>方法也会在一定程度上增加代码的复杂性，因此惰性加载应该在必要的时候再使用。</p>
+<h3 id="分支">分支</h3>
+<p><strong>分支（branching）</strong>技术的意义在于根据不同的条件，对单体进行不同的实例化过程。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre>                    <span class="function"><span class="keyword">constructor</span>
+                         │<span class="title">condition</span>
+            ┌────────────┼────────────┐
+            │            │            │
+<span class="title">return</span>   <span class="title">branch1</span>      <span class="title">branch2</span>      <span class="title">branch3</span></span>
+</pre></td></tr></table></figure>
+
+<p>在构造函数中存在不同的实例对象，针对condition判断条件的不同返回值，构造函数返回不同的对象作为单体的实例。例如对不同的浏览器来说，支持的<code>XHR</code>对象不一样，大多数浏览器中是<code>XMLHttpRequest</code>的实例，早期的IE浏览器中是某种<code>ActiveX</code>的实例。我们在创建<code>XHR</code>对象的时候，可以根据不同浏览器的支持情况返回不同的实例，like this：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+</pre></td><td class="code"><pre><span class="keyword">var</span> XHRFactory = (<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="keyword">var</span> standard = {
+    createXHR: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+      <span class="keyword">return</span> <span class="keyword">new</span> XMLHttpRequest();
+    }
+  };
+  <span class="keyword">var</span> activeX = {
+    createXHR: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+      <span class="keyword">return</span> <span class="keyword">new</span> ActiveXObject(<span class="string">'Msxml2.XMLHTTP'</span>);
+    }
+  };
+  <span class="keyword">var</span> activeOld = {
+    createXHR: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+      <span class="keyword">return</span> <span class="keyword">new</span> ActiveXObject(<span class="string">'Microsofe.XMLHTTP'</span>);
+    }
+  }
+
+  <span class="keyword">var</span> testObj;
+  <span class="keyword">try</span> {
+    testObj = standard.createXHR();
+    <span class="keyword">return</span> standard;
+  } <span class="keyword">catch</span> (e) {
+    <span class="keyword">try</span> {
+      testObj = activeX.createXHR();
+      <span class="keyword">return</span> standard;
+    } <span class="keyword">catch</span> (e) {
+      <span class="keyword">try</span> {
+        testObj = activeOld.createXHR();
+        <span class="keyword">return</span> standard;
+      } <span class="keyword">catch</span> (e) {
+        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'No XHR object found in this environment.'</span>);
+      }
+    }
+  }
+})();
+</pre></td></tr></table></figure>
+
+<p>通过<code>try-catch</code>语句对浏览器<code>XHR</code>的支持性进行测试同时防止抛出错误，这样不同浏览器都能创建出自己支持的<code>XHR</code>对象的实例。</p>
+<h2 id="单体模式之利弊">单体模式之利弊</h2>
+<h3 id="单体模式之利">单体模式之利</h3>
+<ol>
+<li>单体模式能很好的<strong>组织代码</strong>，由于单体对象只会实例化一次，单体对象中的代码可以方便地进行维护。</li>
+<li>单体模式可以生成自己的<strong>命名空间</strong>，防止自己的代码被别人随意修改。</li>
+<li><strong>惰性实例化</strong>，有助于性能的提升。</li>
+<li><strong>分支</strong>，针对特定环境定制专属的方法。</li>
+</ol>
+<h3 id="单体模式之弊">单体模式之弊</h3>
+<p>类之间的耦合性可能增强，因为要通过命名空间去对一些方法进行访问，强耦合的后果会不利于单元测试。</p>
+<h2 id="链式调用">链式调用</h2>
+<p>说起链式调用，绝大多数的前端开发者一定会马上想到大名鼎鼎的<a href="http://jquery.com/" target="_blank"><strong>jQuery</strong></a>，这说明jQuery对开发者思想的束缚还真是深啊。。。</p>
+<p>Anyway，jQuery的链式调用特性确实是给开发带来了很多的便利，一条语句可以完成几条语句的工作。那么链式调用是怎么实现的呢？</p>
+<p>要实现链式调用其实是利用JavaScript的一些语法特性，主要分为两个部分：</p>
+<ol>
+<li>创建包含需要操作的HTML元素的对象。</li>
+<li>对这个HTML元素进行操作的方法。</li>
+</ol>
+<p>将所有的方法都定义在构造器函数prototype属性所指的对象中，这样所有的实例都可以调用这些方法，并且所有的方法都返回调用它们的实例的引用。这样就实现了一个基本的链式调用。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="code"><pre>(<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="function"><span class="keyword">function</span> <span class="title">_$</span><span class="params">(els)</span> {</span>
+    <span class="keyword">this</span>.elements = [];
+    ... <span class="comment">// 通过一系列操作将匹配元素存入this.elements</span>
+  }
+
+  window.$ = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span> <span class="comment">// 对外接口</span>
+    <span class="keyword">return</span> <span class="keyword">new</span> _$(<span class="built_in">arguments</span>);
+  }
+})();
+</pre></td></tr></table></figure>
+
+<p>接下来就可以在构造器函数的原型所指对象中添加我们需要的方法了，我们可以根据需要添加DOM方法，ajax方法等，然后就可以完成一个小JS库了~</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="code"><pre>(<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="function"><span class="keyword">function</span> <span class="title">_$</span><span class="params">(els)</span> {</span>
+    ...
+  }
+
+  _$.prototype = {
+    each: <span class="function"><span class="keyword">function</span><span class="params">(fn)</span> {</span>
+      <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, len = <span class="keyword">this</span>.length; i &lt; len; i++) {
+        fn.call(<span class="keyword">this</span>, <span class="keyword">this</span>.elements[i]);
+      }
+      <span class="keyword">return</span> <span class="keyword">this</span>;
+    }
+    ...
+  }
+})();
+</pre></td></tr></table></figure>
+
+<p>关键的一点就是每个方法的最后都是<code>return this;</code>，它返回调用方法的实例引用，这样我们可以继续让这个<code>this</code>去调用其他方法，从而实现链式调用。</p>
+<p><strong>使用回调</strong><br>回调的模式如果按照常规的方式运用在一些取值器方法上的时候，可能会给使用者造成一些麻烦。因为使用取值器的时候，可能下一步我们需要对取到的值进行一些操作，而链式调用返回的是对象本身。</p>
+<p>为了保持链式调用能使用，<code>return this;</code>是不能动的，那么要对取到的值进行操作的话，就应该在取值器内部进行，将我们需要的操作过程封装成函数传入取值器，将值作为自定义函数的参数，这就是典型的回调函数思想。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="code"><pre>(<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="function"><span class="keyword">function</span> <span class="title">_$</span><span class="params">(els)</span> {</span>
+    ...
+  }
+
+  _$.prototype = {
+    getValue: <span class="function"><span class="keyword">function</span><span class="params">(callback)</span> {</span>
+      callback.call(<span class="keyword">this</span>, <span class="keyword">this</span>.value); <span class="comment">// 通过传入回调函数对取到的值进行操作</span>
+      <span class="keyword">return</span> <span class="keyword">this</span>; <span class="comment">// 同时不影响继续链式调用</span>
+    }
+    ...
+  }
+})();
+</pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/前端/">前端</a>, <a href="/tags/JavaScript/">JavaScript</a>, <a href="/tags/学习笔记/">学习笔记</a>, <a href="/tags/设计模式/">设计模式</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <!-- 多说评论框 start -->
+  <div class="ds-thread" data-title="JavaScript 设计模式读书笔记(四)——单体模式和链式调用" data-url="http://classicemi.github.io/2014/04/27/javascript-pattern-04/"></div>
+<!-- 多说评论框 end -->
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:classicemi.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
+  
+    <li><a href="/tags/css/">css</a><small>1</small></li>
+  
+    <li><a href="/tags/css3/">css3</a><small>1</small></li>
+  
+    <li><a href="/tags/兼容性/">兼容性</a><small>1</small></li>
+  
+    <li><a href="/tags/前端/">前端</a><small>12</small></li>
+  
+    <li><a href="/tags/学习笔记/">学习笔记</a><small>7</small></li>
+  
+    <li><a href="/tags/设计模式/">设计模式</a><small>7</small></li>
+  
+  </ul>
+</div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=1767982234&verifier=c2b9a5b2&dpc=1"></iframe>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 classicemi
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"classicemi"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+  <a href="https://github.com/classicemi"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/c6286ade715e9bea433b4705870de482a654f78a/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_white_ffffff.png"></a>
+</body>
+</html>

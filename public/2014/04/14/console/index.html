@@ -1,0 +1,431 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>你真的了解 console 吗 | classicemi&#39;s blog</title>
+  <meta name="author" content="classicemi">
+  
+  <meta name="description" content="classicemi&#39;s blog front-end life 前端 生活">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="你真的了解 console 吗"/>
+  <meta property="og:site_name" content="classicemi&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon" type="image/x-icon">
+  <link rel="alternate" href="/atom.xml" title="classicemi&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">classicemi&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About Me</a></li>
+    
+    <li><a href="/atom.xml">RSS</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-04-14T05:51:28.000Z"><a href="/2014/04/14/console/">Apr 14 2014</a></time>
+      
+      
+  
+    <h1 class="title">你真的了解 console 吗</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>对于前端开发者来说，在开发过程中需要监控某些表达式或变量的值的时候，用 debugger 会显得过于笨重，取而代之则是会将值输出到控制台上方便调试。最常用的语句就是<code>console.log(expression)</code>了。</p>
+<p>然而对于作为一个全局对象的<code>console</code>对象来说，大多数人了解得还并不全面，当然我也是，经过我的一番学习，现在对于这个能玩转控制台的 JS 对象有了一定的认识，想与大家分享一下。</p>
+<p>console 对象除了<code>console.log()</code>这一最常被开发者使用的方法之外，还有很多其他的方法。灵活运用这些方法，可以给开发过程增添许多便利。</p>
+<a id="more"></a>
+
+<h2 id="console_的方法">console 的方法</h2>
+<p><strong>console.assert(expression, object[, object…])</strong></p>
+<p>接收至少两个参数，第一个参数的值或返回值为<code>false</code>的时候，将会在控制台上输出后续参数的值。例如：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre>console.assert(<span class="number">1</span> == <span class="number">1</span>, object); <span class="comment">// 无输出，返回 undefined</span>
+console.assert(<span class="number">1</span> == <span class="number">2</span>, object); <span class="comment">// 输出 object</span>
+</pre></td></tr></table></figure>
+
+<p><strong>console.count([label])</strong></p>
+<p>输出执行到该行的次数，可选参数 label 可以输出在次数之前，例如：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="code"><pre>(<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) {
+    console.count(<span class="string">'count'</span>);
+  }
+})();
+<span class="comment">// count: 1</span>
+<span class="comment">// count: 2</span>
+<span class="comment">// count: 3</span>
+<span class="comment">// count: 4</span>
+<span class="comment">// count: 5</span>
+</pre></td></tr></table></figure>
+
+<p><strong>console.dir(object)</strong></p>
+<p>将传入对象的属性，包括子对象的属性以列表形式输出，例如：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+</pre></td><td class="code"><pre><span class="keyword">var</span> obj = {
+  name: <span class="string">'classicemi'</span>,
+  college: <span class="string">'HUST'</span>,
+  major: <span class="string">'ei'</span>
+};
+console.dir(obj);
+</pre></td></tr></table></figure>
+
+<p>输出：</p>
+<p><img src="/img/console.dir.jpg" alt=""></p>
+<p><strong>console.error(object[, object…])</strong></p>
+<p>用于输出错误信息，用法和常见的<code>console.log</code>一样，不同点在于输出内容会标记为错误的样式，便于分辨。输出结果：</p>
+<p><img src="/img/console.error.jpg" alt=""></p>
+<p><strong>console.group</strong></p>
+<p>这是个有趣的方法，它能够让控制台输出的语句产生不同的层级嵌套关系，每一个<code>console.group()</code>会增加一层嵌套，相反要减少一层嵌套可以使用<code>console.groupEnd()</code>方法。语言表述比较无力，看代码：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="code"><pre>console.log(<span class="string">'这是第一层'</span>);
+console.group();
+console.log(<span class="string">'这是第二层'</span>);
+console.log(<span class="string">'依然第二层'</span>);
+console.group();
+console.log(<span class="string">'第三层了'</span>);
+console.groupEnd();
+console.log(<span class="string">'回到第二层'</span>);
+console.groupEnd();
+console.log(<span class="string">'回到第一层'</span>);
+</pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<p><img src="/img/console.group.jpg" alt=""></p>
+<p>和<code>console.group()</code>相似的方法是<code>console.groupCollapsed()</code>作用相同，不同点是嵌套的输出内容是折叠状态，在有大段内容输出的时候使用这个方法可以使输出版面不至于太长。。。吧</p>
+<p><strong>console.info(object[, object…])</strong></p>
+<p>此方法与之前说到的<code>console.error</code>一样，用于输出信息，没有什么特别之处。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>console.info(<span class="string">'info'</span>); <span class="comment">// 输出 info</span>
+</pre></td></tr></table></figure>
+
+<p><strong>console.table()</strong></p>
+<p>可将传入的对象，或数组以表格形式输出，相比传统树形输出，这种输出方案更适合内部元素排列整齐的对象或数组，不然可能会出现很多的 undefined。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="code"><pre><span class="keyword">var</span> obj = {
+  foo: {
+    name: <span class="string">'foo'</span>,
+    age: <span class="string">'33'</span>
+  },
+  bar: {
+    name: <span class="string">'bar'</span>,
+    age: <span class="string">'45'</span>
+  }
+};
+
+<span class="keyword">var</span> arr = [
+  [<span class="string">'foo'</span>, <span class="string">'33'</span>],
+  [<span class="string">'bar'</span>, <span class="string">'45'</span>]
+];
+
+console.table(obj);
+console.table(arr);
+</pre></td></tr></table></figure>
+
+<p><img src="/img/console.table.jpg" alt=""></p>
+<p>也可以</p>
+<p><strong>console.log(object[, object…])</strong></p>
+<p>这个不用多说，这个应该是开发者最常用的吧，也不知道是谁规定的。。。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>console.log(<span class="string">'log'</span>); <span class="comment">// 输出 log</span>
+</pre></td></tr></table></figure>
+
+<p><strong>console.profile([profileLabel])</strong></p>
+<p>这是个挺高大上的东西，可用于性能分析。在 JS 开发中，我们常常要评估段代码或是某个函数的性能。在函数中手动打印时间固然可以，但显得不够灵活而且有误差。借助控制台以及<code>console.profile()</code>方法我们可以很方便地监控运行性能。</p>
+<p>例如下面这段代码：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">parent</span><span class="params">()</span> {</span>
+  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) {
+    childA()
+  }
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">childA</span><span class="params">(j)</span> {</span>
+  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; j; i++) {}
+}
+
+console.profile(<span class="string">'性能分析'</span>);
+parent();
+console.profileEnd();
+</pre></td></tr></table></figure>
+
+<p>然后我们可以在 Profiles 面板下看到上述代码运行过程中的消耗时间。</p>
+<p><img src="/img/console.profile1.jpg" alt=""></p>
+<p>页面加载过程的性能优化是前端开发的一个重要部分，使用控制台的 profiles 面板可以监控所有 JS 的运行情况使用方法就像录像机一样，控制台会把运行过程录制下来。如图，工具栏上有录制和停止按钮。</p>
+<p><img src="/img/console.profile3.jpg" alt=""></p>
+<p>录制结果：</p>
+<p><img src="/img/console.profile2.jpg" alt=""></p>
+<p><strong>console.time(name)</strong><br>计时器，可以将成对的<code>console.time()</code>和<code>console.timeEnd()</code>之间代码的运行时间输出到控制台上，<code>name</code>参数可作为标签名。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre>console.time(<span class="string">'计时器'</span>);
+<span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) {
+  <span class="keyword">for</span> (<span class="keyword">var</span> j = <span class="number">0</span>; j &lt; <span class="number">1000</span>; j++) {}
+}
+console.timeEnd(<span class="string">'计时器'</span>);
+</pre></td></tr></table></figure>
+
+<p><img src="/img/console.time.jpg" alt=""></p>
+<p>（刚才实际多写了一层循环，结果电脑风扇呜呜转啊，浏览器直接无响应了。。。）</p>
+<p><strong>console.trace()</strong></p>
+<p><code>console.trace()</code>用来追踪函数的调用过程。在大型项目尤其是框架开发中，函数的调用轨迹可以十分复杂，<code>console.trace()</code>方法可以将函数的被调用过程清楚地输出到控制台上。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">tracer</span><span class="params">(a)</span> {</span>
+  console.trace();
+  <span class="keyword">return</span> a;
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">(a)</span> {</span>
+  <span class="keyword">return</span> bar(a);
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">bar</span><span class="params">(a)</span> {</span>
+  <span class="keyword">return</span> tracer(a);
+}
+
+<span class="keyword">var</span> a = foo(<span class="string">'tracer'</span>);
+</pre></td></tr></table></figure>
+
+<p>输出：</p>
+<p><img src="/img/console.trace.jpg" alt=""></p>
+<p><strong>console.warn(object[, object…])</strong></p>
+<p>输出参数的内容，作为警告提示。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>console.warn(<span class="string">'warn'</span>); <span class="comment">// 输出 warn</span>
+</pre></td></tr></table></figure>
+
+<p><strong>占位符</strong></p>
+<p><code>console</code>对象上的五个直接输出方法，<code>console.log()</code>,<code>console.warn()</code>,<code>console.error()</code>,<code>console.exception()</code>(等同于<code>console.error()</code>)和<code>console.info()</code>，都可以使用占位符。支持的占位符有四种，分别是字符(<code>%s</code>)、整数(<code>%d</code> 或 <code>%i</code>)、浮点数(<code>%f</code>)和对象(<code>%o</code>)。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="code"><pre>console.log(<span class="string">'%s是%d年%d月%d日'</span>, <span class="string">'今天'</span>, <span class="number">2014</span>, <span class="number">4</span>, <span class="number">15</span>);
+console.log(<span class="string">'圆周率是%f'</span>, <span class="number">3.14159</span>);
+
+<span class="keyword">var</span> obj = {
+  name: <span class="string">'classicemi'</span>
+}
+console.log(<span class="string">'%o'</span>, obj);
+</pre></td></tr></table></figure>
+
+<p><img src="/img/占位符.jpg" alt=""></p>
+<p>还有一种特殊的标示符<code>%c</code>，对输出的文字可以附加特殊的样式，当进行大型项目开发的时候，代码中可能有很多其他开发者添加的控制台语句。开发者对自己的输出定制特别的样式就可以方便自己在眼花缭乱的输出结果中一眼看到自己需要的内容。想象力丰富的童鞋也可以做出有创意的输出信息，比如常见的招聘信息和个人介绍啥的。</p>
+<p>输出结果：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+</pre></td><td class="code"><pre>console.log(<span class="string">'%cMy name is classicemi.'</span>, <span class="string">'color: #fff; background: #f40; font-size: 24px;'</span>);
+</pre></td></tr></table></figure>
+
+<p><img src="/img/c.jpg" alt=""></p>
+<p><code>%c</code>标示符可以用各种 CSS 语句来为输出添加样式，再随便举个栗子，<code>background</code>属性的<code>url()</code>中添加图片路径就可以实现图片的输出了，各位前端童鞋快施展你们的 CSS 神技来把控制台玩坏吧~~</p>
+<h2 id="参考文献">参考文献</h2>
+<ol>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/console" target="_blank">https://developer.mozilla.org/en-US/docs/Web/API/console</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2011/03/firebug_console_tutorial.html" target="_blank">http://www.ruanyifeng.com/blog/2011/03/firebug_console_tutorial.html</a></li>
+<li><a href="http://blog.segmentfault.com/civerzhu/1190000000425386" target="_blank">http://blog.segmentfault.com/civerzhu/1190000000425386</a></li>
+<li><a href="http://blog.mariusschulz.com/2013/11/13/advanced-JavaScript-debugging-with-consoletable" target="_blank">http://blog.mariusschulz.com/2013/11/13/advanced-JavaScript-debugging-with-consoletable</a></li>
+</ol>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/前端/">前端</a>, <a href="/tags/JavaScript/">JavaScript</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <!-- 多说评论框 start -->
+  <div class="ds-thread" data-title="你真的了解 console 吗" data-url="http://classicemi.github.io/2014/04/14/console/"></div>
+<!-- 多说评论框 end -->
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:classicemi.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
+  
+    <li><a href="/tags/css/">css</a><small>1</small></li>
+  
+    <li><a href="/tags/css3/">css3</a><small>1</small></li>
+  
+    <li><a href="/tags/兼容性/">兼容性</a><small>1</small></li>
+  
+    <li><a href="/tags/前端/">前端</a><small>12</small></li>
+  
+    <li><a href="/tags/学习笔记/">学习笔记</a><small>7</small></li>
+  
+    <li><a href="/tags/设计模式/">设计模式</a><small>7</small></li>
+  
+  </ul>
+</div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=1767982234&verifier=c2b9a5b2&dpc=1"></iframe>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 classicemi
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"classicemi"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+  <a href="https://github.com/classicemi"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/c6286ade715e9bea433b4705870de482a654f78a/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_white_ffffff.png"></a>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>JavaScript 设计模式读书笔记(六)——门面模式 | classicemi&#39;s blog</title>
+  <meta name="author" content="classicemi">
+  
+  <meta name="description" content="classicemi&#39;s blog front-end life 前端 生活">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="JavaScript 设计模式读书笔记(六)——门面模式"/>
+  <meta property="og:site_name" content="classicemi&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon" type="image/x-icon">
+  <link rel="alternate" href="/atom.xml" title="classicemi&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">classicemi&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About Me</a></li>
+    
+    <li><a href="/atom.xml">RSS</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-05-11T04:14:28.000Z"><a href="/2014/05/11/javascript-pattern-06/">May 11 2014</a></time>
+      
+      
+  
+    <h1 class="title">JavaScript 设计模式读书笔记(六)——门面模式</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>门面模式是什么，与其我去用笨拙的语言去解释，不如看下面这张图，曾经在网上很火的一张图片，说的是一位儿子为他的爸妈设置的电脑桌面。</p>
+<a id="more"></a>
+
+<p><img src="/img/门面_爸妈桌面.jpg" alt=""></p>
+<p>有了这些起好名字的快捷方式，身为电脑盲的爸妈就不需要去了解何为浏览器，何为播放器了，照着指示点就是了。这些快捷方式相当于在用户和计算机程序之间架起了一座桥梁，不需要每个用户都像电影里的黑客一样敲着一行行的代码才能使用计算机的功能。这就是门面模式的意义——把复杂的功能（接口）经过包装，让用户（开发者）能间接地，比较简单地去使用（调用）它们，简化使用（开发）的难度。</p>
+<h2 id="简单的门面模式实例——事件绑定函数">简单的门面模式实例——事件绑定函数</h2>
+<p>门面模式的作用是将复杂的接口进行包装，变成一个便于使用的接口。在很多的JavaScript库中都能找到门面模式的应用，例如jQuery，我们在用jQuery进行事件绑定的时候，简单的调用<code>bind()</code>，<code>on()</code>等方法就可以了，并不用对不同浏览器的兼容性问题进行处理，兼容性的处理在jQuery内部已经完成，就是通过门面的思想。</p>
+<p>我们就以事件绑定为例，来展现一下门面模式是什么：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="code"><pre><span class="comment">// 实现一个通用的，跨多种浏览器的时间绑定函数</span>
+<span class="function"><span class="keyword">function</span> <span class="title">addEvent</span><span class="params">(el, type, fn)</span> {</span>
+  <span class="keyword">if</span> (window.addEventListener) {
+    el.addEventListener(type, fn, <span class="literal">false</span>);
+  } <span class="keyword">else</span> <span class="keyword">if</span> (window.attachEvent) {
+    el.attachEvent(<span class="string">'on'</span> + type, fn);
+  } <span class="keyword">else</span> {
+    el[<span class="string">'on'</span> + type] = fn;
+  }
+}
+</pre></td></tr></table></figure>
+
+<p>通过<strong>能力检测</strong>，对浏览器支持的API进行判断，自动调用有效的事件绑定API来绑定时间。开发者在绑定时间的时候，就不需要写冗长的判断代码，直接专注于业务就好，这是门面模式带来的最直接的便利。</p>
+<p>这里门面模式的作用是处理浏览器的<strong>兼容性</strong>，门面模式的另一个作用是对多个函数进行<strong>组合</strong>管理。</p>
+<p>还是以事件相关API为例，事件绑定中还有两个常用的API分别是<code>event.stopPropagation()</code>和<code>event.preventDefault()</code>。这两个API在IE浏览器中是不兼容的，在IE中它们分别对应的是<code>event.cancelBubble = true</code>和<code>event.returnValue = false</code>。通过门面模式我们的目标是：<br>没有蛀牙~~~<br>以及：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre></td><td class="code"><pre>+---------------+      +------------+      +--------------+      +-----------+
+|stopPropagation|      |cancelBubble|      |preventDefault|      |returnValue|
++---------------+      +------------+      +--------------+      +-----------+
+        |                    |                    |                        |
+        +--------------------+                    +------------------------+
+                   ↓                                          ↓
+           +---------------+                           +--------------+
+           |stopPropagation|                           |preventDefault|
+           +---------------+                           +--------------+
+                   |                wrapped in                 |
+                   +-------------------------------------------+
+                                        ↓
+                          +-----------------------------+
+                          |          ╭ stopPropagation |
+                          | stopEvent                   |
+                          |          ╰ preventDefault  |
+                          +-----------------------------+
+</pre></td></tr></table></figure>
+
+<p>通过代码事件就是这样：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre></td><td class="code"><pre><span class="keyword">var</span> eventUtil = {
+  stopPropagation: <span class="function"><span class="keyword">function</span><span class="params">(ev)</span> {</span>
+    <span class="keyword">if</span> (ev.stopPropagation) {
+      ev.stopPropagation();
+    } <span class="keyword">else</span> {
+      ev.cancelBubble = <span class="literal">true</span>;
+    }
+  },
+  preventDefault: <span class="function"><span class="keyword">function</span><span class="params">(ev)</span> {</span>
+    <span class="keyword">if</span> (ev.preventDefault) {
+      ev.preventDefault();
+    } <span class="keyword">else</span> {
+      ev.returnValue = <span class="literal">false</span>;
+    }
+  },
+  stopEvent: <span class="function"><span class="keyword">function</span><span class="params">(ev)</span> {</span>
+    eventUtil.stopPropagation(ev);
+    eventUtil.preventDefault(ev);
+  }
+}
+</pre></td></tr></table></figure>
+
+<p>这样，在事件绑定函数中，如果需要取消冒泡和默认事件的话，直接调用<code>eventUtil.stopEvent(ev)</code>即可，该方法将所需的子方法进行了包装，也处理了兼容性问题。</p>
+<h2 id="门面模式在模块中的应用">门面模式在模块中的应用</h2>
+<p>结合以前说过的对象创建模式，门面模式可以应用在模块之中，通过对私用方法的包装提供简化的公用方法，开发者维护模块时只需修改私用方法就可以调整公用方法的实现。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre></td><td class="code"><pre><span class="keyword">var</span> orange = (<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="comment">// 私用方法包装对象</span>
+  <span class="keyword">var</span> _privateMethod = {
+    orangeValue: <span class="number">10</span>,
+    getValue: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+      console.log(<span class="keyword">this</span>.orangeValue);
+    },
+    setValue: <span class="function"><span class="keyword">function</span><span class="params">(value)</span> {</span>
+      <span class="keyword">this</span>.orangeValue = value;
+    }
+  }
+
+  <span class="comment">// 返回公用方法</span>
+  <span class="keyword">return</span> {
+    setOrangeValue: <span class="function"><span class="keyword">function</span><span class="params">(value)</span> {</span>
+      _privateMethod.setValue(value);
+      _privateMethod.getValue();
+    }
+  }
+})();
+</pre></td></tr></table></figure>
+
+<p>门面模式能提供编写方式的灵活性，通过对底层子方法的封装，既简化了代码又降低了对底层系统的耦合。在大型系统工具库的使用中有重要的意义。但在实际项目中还是要考虑代码量的<strong>轻便性</strong>，如果业务只需要一些小粒度的方法的话，就没有必要使用包装了很多无用方法的门面函数了，这需要开发者灵活判断。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/前端/">前端</a>, <a href="/tags/JavaScript/">JavaScript</a>, <a href="/tags/学习笔记/">学习笔记</a>, <a href="/tags/设计模式/">设计模式</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <!-- 多说评论框 start -->
+  <div class="ds-thread" data-title="JavaScript 设计模式读书笔记(六)——门面模式" data-url="http://classicemi.github.io/2014/05/11/javascript-pattern-06/"></div>
+<!-- 多说评论框 end -->
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:classicemi.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
+  
+    <li><a href="/tags/css/">css</a><small>1</small></li>
+  
+    <li><a href="/tags/css3/">css3</a><small>1</small></li>
+  
+    <li><a href="/tags/兼容性/">兼容性</a><small>1</small></li>
+  
+    <li><a href="/tags/前端/">前端</a><small>12</small></li>
+  
+    <li><a href="/tags/学习笔记/">学习笔记</a><small>7</small></li>
+  
+    <li><a href="/tags/设计模式/">设计模式</a><small>7</small></li>
+  
+  </ul>
+</div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=1767982234&verifier=c2b9a5b2&dpc=1"></iframe>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 classicemi
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"classicemi"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+  <a href="https://github.com/classicemi"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/c6286ade715e9bea433b4705870de482a654f78a/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_white_ffffff.png"></a>
+</body>
+</html>

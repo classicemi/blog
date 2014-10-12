@@ -1,0 +1,323 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>JavaScript 设计模式读书笔记(五)——工厂模式 | classicemi&#39;s blog</title>
+  <meta name="author" content="classicemi">
+  
+  <meta name="description" content="classicemi&#39;s blog front-end life 前端 生活">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="JavaScript 设计模式读书笔记(五)——工厂模式"/>
+  <meta property="og:site_name" content="classicemi&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon" type="image/x-icon">
+  <link rel="alternate" href="/atom.xml" title="classicemi&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">classicemi&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About Me</a></li>
+    
+    <li><a href="/atom.xml">RSS</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-05-03T04:14:28.000Z"><a href="/2014/05/03/javascript-pattern-05/">May 3 2014</a></time>
+      
+      
+  
+    <h1 class="title">JavaScript 设计模式读书笔记(五)——工厂模式</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>一般来说，创建对象的时候我们都习惯使用<code>new</code>关键字来调用constructor构造函数，但使用这种方式会有一些缺点，首先构造器函数的创建本身就是为了模仿其他一些面向对象语言的特性，有些人觉得这是<em>non-sense</em>；另一方面，在一个类中用<code>new</code>关键字调用其他类的构造函数，会造成两个类之间的耦合，设计模式应该要尽量避免这些影响代码可重用性的问题。</p>
+<a id="more"></a>
+
+<h2 id="简单工厂模式">简单工厂模式</h2>
+<p>一个工厂可以生产同一类的多种物品，具体生产哪种就看客户下什么订单了。工厂模式也是一样，我们创建一个工厂类，它可以创建多种实例，由开发者指定。<br>假设有一个生产交通工具的工厂类<code>Vehicle</code>，它包含生成多种交通工具实例的方法。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">Vehicle</span><span class="params">()</span> {</span>}
+
+Vehicle.prototype = {
+  createVihicle: <span class="function"><span class="keyword">function</span><span class="params">(options)</span> {</span>
+    <span class="keyword">var</span> vehicle;
+
+    <span class="keyword">switch</span>(options.type) {
+      <span class="keyword">case</span> <span class="string">'car'</span>:
+        vehicle = <span class="keyword">new</span> Car();
+        <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="string">'truck'</span>:
+        vehicle = <span class="keyword">new</span> Truck();
+        <span class="keyword">break</span>;
+      <span class="keyword">default</span>:
+        vehicle = <span class="keyword">new</span> Bike();
+    }
+
+    <span class="keyword">return</span> vehicle;
+  }
+};
+</pre></td></tr></table></figure>
+
+<p>在使用这个类生产对象的时候，传入<code>option</code>参数，在参数中的<code>type</code>属性规定我们需要的类型，构造函数就能够返回我们需要的对象类型了。使用这种方法，如果我们要添加新的交通工具类型也是很方便的，在工厂的<code>switch</code>中直接添加一个<code>case</code>就可以了。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="code"><pre><span class="keyword">switch</span>(options.type) {
+  <span class="keyword">case</span> <span class="string">'car'</span>:
+    vehicle = <span class="keyword">new</span> Car();
+    <span class="keyword">break</span>;
+  <span class="keyword">case</span> <span class="string">'truck'</span>:
+    vehicle = <span class="keyword">new</span> Truck();
+    <span class="keyword">break</span>;
+  <span class="keyword">case</span> <span class="string">'plane'</span>:
+    vehicle = <span class="keyword">new</span> Plane();
+    <span class="keyword">break</span>;
+  <span class="keyword">default</span>:
+    vehicle = <span class="keyword">new</span> Bike();
+}
+</pre></td></tr></table></figure>
+
+<p>通过这种方式，将成员对象的创建工作转交给外部对象，可以像上述代码一样转交给独立的命名空间，像<code>Car</code>，<code>Truck</code>，<code>Plane</code>等，如果外部对象属于同一类的话，将它们组织为一个大类中的子类比较合理。</p>
+<h2 id="工厂模式">工厂模式</h2>
+<p>以上介绍的是简单工厂模式，简单工厂模式会把创建工作交给<strong>外部</strong>的类来做，这实际上会增加类的数量，并不利于代码的组织。真正的工厂模式会把创建工作交给子类来完成，父类只对创建过程中的一般性问题进行处理，这些处理会影响到每个子类，而子类之间相互独立，可以对创建过程进行一些定制化操作。</p>
+<p>还是以生产交通工具为例，将交通工具父类改写为一个<strong>抽象类</strong>，它不负责直接生产交通工具，而是通过它派生出一些子类，这些子类代表不同的国家，不同的国家可以生产自己的交通工具。</p>
+<p>将父类抽象化：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">Vehicle</span><span class="params">()</span> {</span>}
+
+Vehicle.prototype = {
+  createVihicle: <span class="function"><span class="keyword">function</span><span class="params">(options)</span> {</span>
+    <span class="comment">// 这里不直接生产，如果直接调用会抛出错误</span>
+    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'Unsupported operation on an abstract class.'</span>)
+  }
+};
+</pre></td></tr></table></figure>
+
+<p>不同的国家作为子类，子类首先对父类进行继承，然后实现自己的<code>createVehicle</code>方法。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">China</span><span class="params">()</span> {</span>}
+
+<span class="comment">// 继承方法</span>
+extend(China, Vehicle);
+
+<span class="comment">// 实现自己的createVehicle方法</span>
+China.prototype.createVehicle = <span class="function"><span class="keyword">function</span><span class="params">(options)</span> {</span>
+  <span class="keyword">var</span> vehicle;
+
+  <span class="keyword">switch</span>(options.type) {
+    <span class="keyword">case</span> <span class="string">'car'</span>:
+      vehicle = <span class="keyword">new</span> Car();
+      <span class="keyword">break</span>;
+    <span class="keyword">case</span> <span class="string">'truck'</span>:
+      vehicle = <span class="keyword">new</span> Truck();
+      <span class="keyword">break</span>;
+    <span class="keyword">default</span>:
+      vehicle = <span class="keyword">new</span> Bike();
+  }
+
+  <span class="keyword">return</span> vehicle;
+}
+</pre></td></tr></table></figure>
+
+<p>以后要生产交通工具的时候就调用<code>China</code>子类的<code>createVehicle</code>方法就可以了。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+</pre></td><td class="code"><pre><span class="keyword">var</span> chinaVehicle = <span class="keyword">new</span> China();
+<span class="keyword">var</span> myCar = chinaVehicle.createVehicle({ type: <span class="string">'Car'</span> });
+</pre></td></tr></table></figure>
+
+<p>一般性的代码集中在父类中，个性化的代码在子类中单独定制。</p>
+<h2 id="工厂模式适用场合">工厂模式适用场合</h2>
+<p>子类的共同点是它们都实现了同一批接口，尽管内部细节并不尽相同。生产对象的方法有一个选择性的过程，这种选择可以是开发者自定的，比如需要生产何种交通工具，也可以是自动选择的，比如根据浏览器环境生产合适的XHR对象。对于相似性很高，实现了同一类接口的对象，工厂模式是比较合适的。</p>
+<p>另外的一大好处就是子类的一些设置代码可以全部放在父类的构造器函数中，不需要在每个子类的构造函数中重复运行同样的代码，只需要在父类的代码中实现一次就好。子类只需要专注于实现自己的方法，不用考虑别的问题。</p>
+<p>最后一点则是如果一个类中包含了很多更小的子类作为自己的组成部分，那么替换这些子类的工作会很简单，因为工厂模式降低了模块之间的耦合度，一个模块并不会依赖于其某一组成部分。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/前端/">前端</a>, <a href="/tags/JavaScript/">JavaScript</a>, <a href="/tags/学习笔记/">学习笔记</a>, <a href="/tags/设计模式/">设计模式</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <!-- 多说评论框 start -->
+  <div class="ds-thread" data-title="JavaScript 设计模式读书笔记(五)——工厂模式" data-url="http://classicemi.github.io/2014/05/03/javascript-pattern-05/"></div>
+<!-- 多说评论框 end -->
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:classicemi.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
+  
+    <li><a href="/tags/css/">css</a><small>1</small></li>
+  
+    <li><a href="/tags/css3/">css3</a><small>1</small></li>
+  
+    <li><a href="/tags/兼容性/">兼容性</a><small>1</small></li>
+  
+    <li><a href="/tags/前端/">前端</a><small>12</small></li>
+  
+    <li><a href="/tags/学习笔记/">学习笔记</a><small>7</small></li>
+  
+    <li><a href="/tags/设计模式/">设计模式</a><small>7</small></li>
+  
+  </ul>
+</div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=1767982234&verifier=c2b9a5b2&dpc=1"></iframe>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 classicemi
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"classicemi"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+  <a href="https://github.com/classicemi"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/c6286ade715e9bea433b4705870de482a654f78a/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_white_ffffff.png"></a>
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>JavaScript 设计模式读书笔记(二)——封装，简单的创建对象模式 | classicemi&#39;s blog</title>
+  <meta name="author" content="classicemi">
+  
+  <meta name="description" content="classicemi&#39;s blog front-end life 前端 生活">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="JavaScript 设计模式读书笔记(二)——封装，简单的创建对象模式"/>
+  <meta property="og:site_name" content="classicemi&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon" type="image/x-icon">
+  <link rel="alternate" href="/atom.xml" title="classicemi&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">classicemi&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About Me</a></li>
+    
+    <li><a href="/atom.xml">RSS</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-04-22T05:51:28.000Z"><a href="/2014/04/22/javascript-pattern-02/">Apr 22 2014</a></time>
+      
+      
+  
+    <h1 class="title">JavaScript 设计模式读书笔记(二)——封装，简单的创建对象模式</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="什么是封装">什么是封装</h2>
+<p>找工作时一些公司给了offer后我就想知道真正拿到手的是多少，毕竟赋税繁重。但各种税也好，五险一金也好我实在是弄不清楚，于是我就会在网上的一些税后收入计算器上进行计算，只需要填写一些基本信息，比如税前收入，所在地区等等，就能够获得详细的结果，包括各种税收的详细数值。在这个过程中，我只是按照接口给定的要求进行了数据的输入，具体计算过程我并不知道。也就是说，在这个程序内部，数据表现形式和实现细节是隐藏的，这在某种意义上也是封装的一种。</p>
+<a id="more"></a>
+
+<p>在JavaScript中，对象中的细节有时也需要隐藏，但JS不像其他的静态语言，比如Java，一样，有<code>private</code>这样的关键字。那么在JavaScript中，就可以用闭包的概念来创建只能从对象内部访问的方法和属性。</p>
+<p>在使用接口实现信息隐藏的过程中，同时也是使用了接口的概念。好比火影里的通灵术，人与动物签订契约，进行某种交换。这中间的沟通渠道不变，签订契约的人就可以随时随地进行通灵。一个类中，应该定义足够的安全的接口。然而在JS中，语言特性非常灵活，类中的公有方法和私有方法实际是一样的。因此，在实现类的时候，应该避免公开未定义于接口的方法。</p>
+<h2 id="创建对象">创建对象</h2>
+<p>JavaScript中，创建对象的基本模式有三种。</p>
+<ul>
+<li><strong> 直接创建 </strong>对象中的所有方法都是公有的，可以公开访问。</li>
+<li><strong> 使用下划线 </strong>在私有方法名称前加下划线，表示该方法私有。</li>
+<li><strong> 使用闭包 </strong>闭包可以创建真正意义上的私有成员，这些成员只能通过特定方法访问。</li>
+</ul>
+<h3 id="直接创建">直接创建</h3>
+<p>所谓直接创建，就是按照传统的方式创建一个类，构造器是一个函数，属性和方法全部公开，比如：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre><span class="keyword">var</span> Fruit = <span class="function"><span class="keyword">function</span><span class="params">(color, weight)</span> {</span>
+  <span class="keyword">this</span>.color = color || <span class="string">'orange'</span>;
+  <span class="keyword">this</span>.weight = weight || <span class="number">150</span>;
+}
+
+Fruit.prototype.boom = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  ...  
+}
+</pre></td></tr></table></figure>
+
+<p>这种方法一般来说没什么问题，但是当其原型上的方法<code>boom</code>对自身的属性<code>color</code>或者<code>weight</code>有一定依赖，而构造时传入的参数不符合一定要求时就会出错。但如果构造时没有出错则所有方法应该能正常工作才是。</p>
+<p>当然这个问题可以在构造对象时就对传入的参数进行验证，也不算太严重。然而另一个问题在于，即使能对参数进行验证，任何程序员还是能够随意修改属性的值。为了解决这个问题，可以设计一个数据的取值器和赋值器。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="code"><pre><span class="keyword">var</span> Fruit = <span class="function"><span class="keyword">function</span><span class="params">(color, weight)</span> {</span>
+  <span class="keyword">this</span>.setColor(color);
+  <span class="keyword">this</span>.setWeight(weight);
+}
+
+Fruit.prototype = {
+  checkColor: <span class="function"><span class="keyword">function</span><span class="params">(color)</span> {</span>
+    ...
+  },
+  setColor: <span class="function"><span class="keyword">function</span><span class="params">(color)</span> {</span>
+    ...
+    <span class="keyword">this</span>.color = color;
+  },
+  getColor: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> <span class="keyword">this</span>.color;
+  },
+  ...
+}
+</pre></td></tr></table></figure>
+
+<p>当程序员之间约定以提供的方法对属性值进行操作时，操作过程可以相对得到规范。但实际上属性仍然是公开的，可以被直接设置，这种方法并不能阻止这种行为。</p>
+<h3 id="使用下划线，区别私用成员">使用下划线，区别私用成员</h3>
+<p>此种方法与前一种方法其实是一回事，只是在私用的方法和属性前加了下划线表示它是私用的。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="code"><pre><span class="keyword">var</span> Fruit = <span class="function"><span class="keyword">function</span><span class="params">(color, weight)</span> {</span>
+  <span class="keyword">this</span>.setColor(color);
+  <span class="keyword">this</span>.setWeight(weight);
+}
+
+Fruit.prototype = {
+  _checkColor: <span class="function"><span class="keyword">function</span><span class="params">(color)</span> {</span>
+    ...
+  },
+  setColor: <span class="function"><span class="keyword">function</span><span class="params">(color)</span> {</span>
+    ... <span class="comment">// 此处对输入的数据进行验证，不能通过验证就抛出异常</span>
+    <span class="keyword">this</span>._color = color;
+  },
+  getColor: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> <span class="keyword">this</span>._color;
+  },
+  ...
+}
+</pre></td></tr></table></figure>
+
+<p>这种方法有助于防止对私用方法的无意使用，但无法保证程序员不有意使用它们。</p>
+<h3 id="使用闭包">使用闭包</h3>
+<p>借助闭包就可以创建只允许特定函数访问的变量了，私用属性的创建方法即是在构造函数的作用域中创建变量即可，这些变量可以被该作用域中的所有函数访问。</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+</pre></td><td class="code"><pre><span class="keyword">var</span> Fruit = <span class="function"><span class="keyword">function</span><span class="params">(newColor, weight)</span> {</span>
+  <span class="keyword">var</span> color, weight;
+
+  <span class="comment">// 私用方法</span>
+  <span class="function"><span class="keyword">function</span> <span class="title">_checkColor</span> = <span class="title">function</span><span class="params">(color)</span> {</span>
+    ...
+  }
+
+  <span class="comment">// 特权方法</span>
+  <span class="keyword">this</span>.getColor = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> color;
+  };
+
+  <span class="keyword">this</span>.setColor = <span class="function"><span class="keyword">function</span><span class="params">(newColor)</span> {</span>
+    ... <span class="comment">// 验证输入</span>
+    color = newColor;
+  }
+
+  <span class="comment">// 构造过程代码</span>
+  <span class="keyword">this</span>.setColor(newColor);
+}
+</pre></td></tr></table></figure>
+
+<p>借助<code>this</code>关键字创建的方法就是特权方法了，它们是公开方法，同时也能够访问私有变量。如果需要创建一些不需要访问私有属性的方法的话，可以在<code>Fruit.prototype</code>上进行创建。通过这种方式创建的方法，不能直接访问私有变量，但是可以通过<code>getColor</code>这样的特权方法进行间接访问。</p>
+<p>当然这种方式也有弊端，如果特权方法过多，会占用较多内存，因为通过构造函数创建的实例都保存了特权方法的副本，而原型上的方法只有一份。因此，在设计构造函数时，需要进行慎重考虑。</p>
+<p>另一个问题就在于这样的方法无法作用于需要创建子类的场景，由于特权方法都是新的副本，所以子类无法访问超类的任何私用属性或方法。因此在JavaScript中，这种问题被称作“继承破坏封装”(inheritance breaks encapsulation)。</p>
+<h2 id="高级创建对象模式初探">高级创建对象模式初探</h2>
+<p>以上的三种方法属于创造对象的基本方法，但要实现一些高级的创建对象模式，有必要先了解一些概念。</p>
+<h3 id="静态方法和属性">静态方法和属性</h3>
+<p>前述的闭包创建对象法可以创建私用属性和方法，但是这样的话，这些属性在创建子类时会同时创建副本存于子类，造成内存的浪费。对于一些只需要在类层面进行操作和访问的属性，可以利用闭包创建静态成员。静态成员每个只有一份，直接通过类对象进行访问。</p>
+<p>仍然以之前的<code>Orange</code>类为例，使用闭包特性添加一些静态成员：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+</pre></td><td class="code"><pre><span class="keyword">var</span> Orange = (<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="comment">// 私用静态属性</span>
+  <span class="keyword">var</span> numOfOranges = <span class="number">0</span>;
+
+  <span class="comment">// 私用静态方法</span>
+  <span class="function"><span class="keyword">function</span> <span class="title">checkColor</span><span class="params">()</span> {</span>
+    ...
+  }
+
+  <span class="comment">// 返回构造器</span>
+  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span><span class="params">(newColor, weight)</span> {</span>
+    <span class="keyword">var</span> color, weight;
+
+    <span class="comment">// 特权方法</span>
+    <span class="keyword">this</span>.getColor = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+      <span class="keyword">return</span> color;
+    };
+    <span class="keyword">this</span>.setColor = <span class="function"><span class="keyword">function</span><span class="params">(newColor)</span> {</span>
+      ...
+      color = newColor;
+    }
+
+    <span class="comment">// 构造器代码</span>
+    numOfOrange++;
+    <span class="keyword">if</span> (numOfOrange &gt; <span class="number">100</span>) {
+      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'Only 100 instances of Orange can be created.'</span>);
+    }
+
+    <span class="keyword">this</span>.setColor(newColor);
+  }
+})();
+
+<span class="comment">// 公开静态方法</span>
+Orange.turnToJuice = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span> <span class="comment">// 不添加在Orange的prototype上</span>
+  ...
+};
+
+<span class="comment">// 公开的非特权方法</span>
+Orange.prototype = {
+  checkWeight: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    ...
+  }
+};
+</pre></td></tr></table></figure>
+
+<p>这与之前的闭包创建类的最大区别在于构造器由一个普通函数变成了一个内嵌函数，通过一个自执行函数的返回值赋给<code>Orange</code>。在实例化<code>Orange</code>时，调用的是返回的内嵌函数，外层函数只是一个用来存放静态私用成员的闭包。在构造器中的特权方法可以访问构造器之外的静态属性和方法，而静态方法不能访问任何定义在构造器中的私用属性。</p>
+<h3 id="常量">常量</h3>
+<p>常量就是不能被修改的变量，利用静态属性可以在JavaScript中模拟常量。对常量只创建作为取值器的静态方法，而不创建赋值器，在外围作用域中也不能访问到常量：</p>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="code"><pre><span class="keyword">var</span> Class = (<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+  <span class="comment">// 常量</span>
+  <span class="keyword">var</span> CONST = <span class="number">100</span>;
+
+  <span class="comment">// 构造器</span>
+  <span class="keyword">var</span> constructorFunc = <span class="function"><span class="keyword">function</span><span class="params">(param)</span> {</span>
+    ...
+  };
+
+  <span class="comment">// 静态方法，取值器</span>
+  constructorFunc = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> CONST;
+  };
+
+  <span class="keyword">return</span> constructorFunc;
+})();
+</pre></td></tr></table></figure>
+
+<h2 id="封装之利弊">封装之利弊</h2>
+<h3 id="封装之利">封装之利</h3>
+<p>保护内部数据，只对外提供取值器和赋值器，便于重构。减少模块间耦合。</p>
+<h3 id="封装之弊">封装之弊</h3>
+<p>难以进行单元测试，外部测试无法访问到内部变量和方法。不过如公用方法可以间接访问私用方法的话，可以对私用方法进行间接单元测试。</p>
+<p>实现过程较为复杂，调试难度比较大。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/前端/">前端</a>, <a href="/tags/JavaScript/">JavaScript</a>, <a href="/tags/学习笔记/">学习笔记</a>, <a href="/tags/设计模式/">设计模式</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <!-- 多说评论框 start -->
+  <div class="ds-thread" data-title="JavaScript 设计模式读书笔记(二)——封装，简单的创建对象模式" data-url="http://classicemi.github.io/2014/04/22/javascript-pattern-02/"></div>
+<!-- 多说评论框 end -->
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:classicemi.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
+  
+    <li><a href="/tags/css/">css</a><small>1</small></li>
+  
+    <li><a href="/tags/css3/">css3</a><small>1</small></li>
+  
+    <li><a href="/tags/兼容性/">兼容性</a><small>1</small></li>
+  
+    <li><a href="/tags/前端/">前端</a><small>12</small></li>
+  
+    <li><a href="/tags/学习笔记/">学习笔记</a><small>7</small></li>
+  
+    <li><a href="/tags/设计模式/">设计模式</a><small>7</small></li>
+  
+  </ul>
+</div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=1767982234&verifier=c2b9a5b2&dpc=1"></iframe>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 classicemi
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"classicemi"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+  <a href="https://github.com/classicemi"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/c6286ade715e9bea433b4705870de482a654f78a/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_white_ffffff.png"></a>
+</body>
+</html>

@@ -1,0 +1,521 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>classicemi&#39;s blog</title>
+  <meta name="author" content="classicemi">
+  
+  <meta name="description" content="classicemi&#39;s blog front-end life 前端 生活">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+  <meta property="og:site_name" content="classicemi&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon" type="image/x-icon">
+  <link rel="alternate" href="/atom.xml" title="classicemi&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">classicemi&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About Me</a></li>
+    
+    <li><a href="/atom.xml">RSS</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper">
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-10-04T14:29:28.000Z"><a href="/2014/10/04/missing-properties-in-console/">Oct 4 2014</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2014/10/04/missing-properties-in-console/">消失的属性</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>最近在开发组件的过程中，需要随时监控整个组件对象的构建，包括对象上的属性方法的变更，以及原型链的变化。本来，在测试代码中加一个<code>console.log</code>：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+</pre></td><td class="code"><pre><span class="keyword">var</span> d = <span class="keyword">new</span> dialog({
+    ...
+});
+console.log(<span class="string">'final object'</span>, d);
+d.show();
+</pre></td></tr></table></figure>
+
+<p>就可以观察最终生成的组件对象是否符合我的预期，也没出过什么问题，也没理由会出现什么问题，直到调试过程中出现了这样的情况：</p>
+
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2014/10/04/missing-properties-in-console/#more" class="more-link">continue</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-05-16T12:07:28.000Z"><a href="/2014/05/16/browser-detect/">May 16 2014</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2014/05/16/browser-detect/">部分浏览器检测方法</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>检测方法均摘自司徒正美所著《JavaScript框架设计》一书，同样内容在其博客中亦有记载。我在原内容基础上对判断方法的原理加上了注释，便于理解记忆。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2014/05/16/browser-detect/#more" class="more-link">continue</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-05-12T12:14:28.000Z"><a href="/2014/05/12/javascript-pattern-07/">May 12 2014</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2014/05/12/javascript-pattern-07/">JavaScript 设计模式读书笔记(七)——适配器模式</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="与门面模式的联系">与门面模式的联系</h2>
+<p>本文要说的适配器模式和上一篇门面模式在思想上有相似之处，所以放在一起说。它们都对类的接口进行了一些改变。门面模式是把相似的或是完成相关任务的接口进行组织，提供给用户一个更加简单易用，更适用于某种业务的接口。而适配器模式是要把一个接口转换为另一个接口，它不对接口的功能进行干涉，它不会简化接口，而是将接口变为更丰富且兼容的接口。</p>
+<p>简而言之，门面模式是让本来就可以用的接口变得更好用。而适配器是让不合适的接口变得合适。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2014/05/12/javascript-pattern-07/#more" class="more-link">continue</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-05-11T04:14:28.000Z"><a href="/2014/05/11/javascript-pattern-06/">May 11 2014</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2014/05/11/javascript-pattern-06/">JavaScript 设计模式读书笔记(六)——门面模式</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>门面模式是什么，与其我去用笨拙的语言去解释，不如看下面这张图，曾经在网上很火的一张图片，说的是一位儿子为他的爸妈设置的电脑桌面。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2014/05/11/javascript-pattern-06/#more" class="more-link">continue</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-05-04T04:14:28.000Z"><a href="/2014/05/04/javascript-module-programming/">May 4 2014</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2014/05/04/javascript-module-programming/">浅谈 JavaScript 模块化编程</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>JavaScript本身不是一种模块化语言，设计者在创造JavaScript之初应该也没有想到这么一个脚本语言的作用领域会越来越大。以前一个页面的JS代码再多也不会多到哪儿去，而现在随着越来越多的JavaScript库和框架的出现，Single-page App的流行以及Node.js的迅猛发展，如果我们还不对自己的JS代码进行一些模块化的组织的话，开发过程会越来越困难，运行性能也会越来越低。因此，了解JS模块化编程是非常重要的。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2014/05/04/javascript-module-programming/#more" class="more-link">continue</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-05-03T04:14:28.000Z"><a href="/2014/05/03/javascript-pattern-05/">May 3 2014</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2014/05/03/javascript-pattern-05/">JavaScript 设计模式读书笔记(五)——工厂模式</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>一般来说，创建对象的时候我们都习惯使用<code>new</code>关键字来调用constructor构造函数，但使用这种方式会有一些缺点，首先构造器函数的创建本身就是为了模仿其他一些面向对象语言的特性，有些人觉得这是<em>non-sense</em>；另一方面，在一个类中用<code>new</code>关键字调用其他类的构造函数，会造成两个类之间的耦合，设计模式应该要尽量避免这些影响代码可重用性的问题。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2014/05/03/javascript-pattern-05/#more" class="more-link">continue</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-04-27T04:38:28.000Z"><a href="/2014/04/27/javascript-pattern-04/">Apr 27 2014</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2014/04/27/javascript-pattern-04/">JavaScript 设计模式读书笔记(四)——单体模式和链式调用</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="设计模式分类">设计模式分类</h2>
+<p>接下来就正式进入设计模式的介绍了，JavaScript设计模式有很多</p>
+<h2 id="单体模式">单体模式</h2>
+<p>在多种Javascript设计模式中，<strong>单体模式</strong>是最简单，也是最基础的设计模式。它基础到似乎不太像是一种设计模式，因为我们在编写代码的过程中随时都会用到，并不需要过多思考，这是它简单的一面。同时，它不仅可以单独存在，甚至也可以成为其他较高级设计模式的组成部分，这也是为什么说它基础的原因。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2014/04/27/javascript-pattern-04/#more" class="more-link">continue</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-04-26T12:51:28.000Z"><a href="/2014/04/26/css-flexible-boxes/">Apr 26 2014</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2014/04/26/css-flexible-boxes/">使用 CSS3 Flexible Boxes 布局</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Flexible Box是什么？Flexible意为可伸缩的，Box意为盒子，可以理解为一种新式的盒模型——<strong>伸缩盒模型</strong>。由<a href="http://www.w3.org/TR/2014/WD-css-flexbox-1-20140325/" target="_blank">CSS3规范</a>提出，这是在原有的大家非常熟悉的<code>block</code>, <code>inline-block</code>, <code>inline</code>的基础上延伸出的新一代布局模式。</p>
+<h2 id="浏览器兼容性">浏览器兼容性</h2>
+<p>作为非常现实的开发者，是否对一个新技术进行关注，首先要考虑它的浏览器兼容性如何。我们的伸缩盒模型的浏览器兼容性看起来还是相当不错的。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2014/04/26/css-flexible-boxes/#more" class="more-link">continue</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-04-23T13:28:28.000Z"><a href="/2014/04/23/javascript-pattern-03/">Apr 23 2014</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2014/04/23/javascript-pattern-03/">JavaScript 设计模式读书笔记(三)——继承</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>继承这个东西在JavaScript中尤其复杂，我掌握得也不好，找工作面试的时候在这个问题上栽过跟头。JavaScript的继承方式属于原型式继承，非常灵活。因此JavaScript的继承方式除了基于类的继承之外还有基于原型的原型式继承。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2014/04/23/javascript-pattern-03/#more" class="more-link">continue</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-04-22T05:51:28.000Z"><a href="/2014/04/22/javascript-pattern-02/">Apr 22 2014</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2014/04/22/javascript-pattern-02/">JavaScript 设计模式读书笔记(二)——封装，简单的创建对象模式</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="什么是封装">什么是封装</h2>
+<p>找工作时一些公司给了offer后我就想知道真正拿到手的是多少，毕竟赋税繁重。但各种税也好，五险一金也好我实在是弄不清楚，于是我就会在网上的一些税后收入计算器上进行计算，只需要填写一些基本信息，比如税前收入，所在地区等等，就能够获得详细的结果，包括各种税收的详细数值。在这个过程中，我只是按照接口给定的要求进行了数据的输入，具体计算过程我并不知道。也就是说，在这个程序内部，数据表现形式和实现细节是隐藏的，这在某种意义上也是封装的一种。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2014/04/22/javascript-pattern-02/#more" class="more-link">continue</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+<nav id="pagination">
+  
+  
+    <a href="/page/2/" class="alignright next">Next</a>
+  
+  <div class="clearfix"></div>
+</nav></div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:classicemi.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/JavaScript/">JavaScript</a><small>11</small></li>
+  
+    <li><a href="/tags/css/">css</a><small>1</small></li>
+  
+    <li><a href="/tags/css3/">css3</a><small>1</small></li>
+  
+    <li><a href="/tags/兼容性/">兼容性</a><small>1</small></li>
+  
+    <li><a href="/tags/前端/">前端</a><small>12</small></li>
+  
+    <li><a href="/tags/学习笔记/">学习笔记</a><small>7</small></li>
+  
+    <li><a href="/tags/设计模式/">设计模式</a><small>7</small></li>
+  
+  </ul>
+</div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=1767982234&verifier=c2b9a5b2&dpc=1"></iframe>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 classicemi
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"classicemi"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+<!-- 多说公共JS代码 end -->
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+  <a href="https://github.com/classicemi"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/c6286ade715e9bea433b4705870de482a654f78a/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_white_ffffff.png"></a>
+</body>
+</html>
