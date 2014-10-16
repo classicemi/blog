@@ -77,151 +77,21 @@
 </ul>
 <h3 id="直接创建">直接创建</h3>
 <p>所谓直接创建，就是按照传统的方式创建一个类，构造器是一个函数，属性和方法全部公开，比如：</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-</pre></td><td class="code"><pre><span class="keyword">var</span> Fruit = <span class="function"><span class="keyword">function</span><span class="params">(color, weight)</span> {</span>
-  <span class="keyword">this</span>.color = color || <span class="string">'orange'</span>;
-  <span class="keyword">this</span>.weight = weight || <span class="number">150</span>;
-}
-
-Fruit.prototype.boom = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-  ...  
-}
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Fruit = <span class="function"><span class="keyword">function</span><span class="params">(color, weight)</span> </span>{</div><div class="line">  <span class="keyword">this</span>.color = color || <span class="string">'orange'</span>;</div><div class="line">  <span class="keyword">this</span>.weight = weight || <span class="number">150</span>;</div><div class="line">}</div><div class="line"></div><div class="line">Fruit.prototype.boom = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">  ...  </div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>这种方法一般来说没什么问题，但是当其原型上的方法<code>boom</code>对自身的属性<code>color</code>或者<code>weight</code>有一定依赖，而构造时传入的参数不符合一定要求时就会出错。但如果构造时没有出错则所有方法应该能正常工作才是。</p>
 <p>当然这个问题可以在构造对象时就对传入的参数进行验证，也不算太严重。然而另一个问题在于，即使能对参数进行验证，任何程序员还是能够随意修改属性的值。为了解决这个问题，可以设计一个数据的取值器和赋值器。</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-</pre></td><td class="code"><pre><span class="keyword">var</span> Fruit = <span class="function"><span class="keyword">function</span><span class="params">(color, weight)</span> {</span>
-  <span class="keyword">this</span>.setColor(color);
-  <span class="keyword">this</span>.setWeight(weight);
-}
-
-Fruit.prototype = {
-  checkColor: <span class="function"><span class="keyword">function</span><span class="params">(color)</span> {</span>
-    ...
-  },
-  setColor: <span class="function"><span class="keyword">function</span><span class="params">(color)</span> {</span>
-    ...
-    <span class="keyword">this</span>.color = color;
-  },
-  getColor: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-    <span class="keyword">return</span> <span class="keyword">this</span>.color;
-  },
-  ...
-}
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Fruit = <span class="function"><span class="keyword">function</span><span class="params">(color, weight)</span> </span>{</div><div class="line">  <span class="keyword">this</span>.setColor(color);</div><div class="line">  <span class="keyword">this</span>.setWeight(weight);</div><div class="line">}</div><div class="line"></div><div class="line">Fruit.prototype = {</div><div class="line">  checkColor: <span class="function"><span class="keyword">function</span><span class="params">(color)</span> </span>{</div><div class="line">    ...</div><div class="line">  },</div><div class="line">  setColor: <span class="function"><span class="keyword">function</span><span class="params">(color)</span> </span>{</div><div class="line">    ...</div><div class="line">    <span class="keyword">this</span>.color = color;</div><div class="line">  },</div><div class="line">  getColor: <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.color;</div><div class="line">  },</div><div class="line">  ...</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>当程序员之间约定以提供的方法对属性值进行操作时，操作过程可以相对得到规范。但实际上属性仍然是公开的，可以被直接设置，这种方法并不能阻止这种行为。</p>
 <h3 id="使用下划线，区别私用成员">使用下划线，区别私用成员</h3>
 <p>此种方法与前一种方法其实是一回事，只是在私用的方法和属性前加了下划线表示它是私用的。</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-</pre></td><td class="code"><pre><span class="keyword">var</span> Fruit = <span class="function"><span class="keyword">function</span><span class="params">(color, weight)</span> {</span>
-  <span class="keyword">this</span>.setColor(color);
-  <span class="keyword">this</span>.setWeight(weight);
-}
-
-Fruit.prototype = {
-  _checkColor: <span class="function"><span class="keyword">function</span><span class="params">(color)</span> {</span>
-    ...
-  },
-  setColor: <span class="function"><span class="keyword">function</span><span class="params">(color)</span> {</span>
-    ... <span class="comment">// 此处对输入的数据进行验证，不能通过验证就抛出异常</span>
-    <span class="keyword">this</span>._color = color;
-  },
-  getColor: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-    <span class="keyword">return</span> <span class="keyword">this</span>._color;
-  },
-  ...
-}
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Fruit = <span class="function"><span class="keyword">function</span><span class="params">(color, weight)</span> </span>{</div><div class="line">  <span class="keyword">this</span>.setColor(color);</div><div class="line">  <span class="keyword">this</span>.setWeight(weight);</div><div class="line">}</div><div class="line"></div><div class="line">Fruit.prototype = {</div><div class="line">  _checkColor: <span class="function"><span class="keyword">function</span><span class="params">(color)</span> </span>{</div><div class="line">    ...</div><div class="line">  },</div><div class="line">  setColor: <span class="function"><span class="keyword">function</span><span class="params">(color)</span> </span>{</div><div class="line">    ... <span class="comment">// 此处对输入的数据进行验证，不能通过验证就抛出异常</span></div><div class="line">    <span class="keyword">this</span>._color = color;</div><div class="line">  },</div><div class="line">  getColor: <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>._color;</div><div class="line">  },</div><div class="line">  ...</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>这种方法有助于防止对私用方法的无意使用，但无法保证程序员不有意使用它们。</p>
 <h3 id="使用闭包">使用闭包</h3>
 <p>借助闭包就可以创建只允许特定函数访问的变量了，私用属性的创建方法即是在构造函数的作用域中创建变量即可，这些变量可以被该作用域中的所有函数访问。</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-</pre></td><td class="code"><pre><span class="keyword">var</span> Fruit = <span class="function"><span class="keyword">function</span><span class="params">(newColor, weight)</span> {</span>
-  <span class="keyword">var</span> color, weight;
-
-  <span class="comment">// 私用方法</span>
-  <span class="function"><span class="keyword">function</span> <span class="title">_checkColor</span> = <span class="title">function</span><span class="params">(color)</span> {</span>
-    ...
-  }
-
-  <span class="comment">// 特权方法</span>
-  <span class="keyword">this</span>.getColor = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-    <span class="keyword">return</span> color;
-  };
-
-  <span class="keyword">this</span>.setColor = <span class="function"><span class="keyword">function</span><span class="params">(newColor)</span> {</span>
-    ... <span class="comment">// 验证输入</span>
-    color = newColor;
-  }
-
-  <span class="comment">// 构造过程代码</span>
-  <span class="keyword">this</span>.setColor(newColor);
-}
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Fruit = <span class="function"><span class="keyword">function</span><span class="params">(newColor, weight)</span> </span>{</div><div class="line">  <span class="keyword">var</span> color, weight;</div><div class="line"></div><div class="line">  <span class="comment">// 私用方法</span></div><div class="line">  <span class="function"><span class="keyword">function</span> <span class="title">_checkColor</span> = <span class="title">function</span><span class="params">(color)</span> </span>{</div><div class="line">    ...</div><div class="line">  }</div><div class="line"></div><div class="line">  <span class="comment">// 特权方法</span></div><div class="line">  <span class="keyword">this</span>.getColor = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">    <span class="keyword">return</span> color;</div><div class="line">  };</div><div class="line"></div><div class="line">  <span class="keyword">this</span>.setColor = <span class="function"><span class="keyword">function</span><span class="params">(newColor)</span> </span>{</div><div class="line">    ... <span class="comment">// 验证输入</span></div><div class="line">    color = newColor;</div><div class="line">  }</div><div class="line"></div><div class="line">  <span class="comment">// 构造过程代码</span></div><div class="line">  <span class="keyword">this</span>.setColor(newColor);</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>借助<code>this</code>关键字创建的方法就是特权方法了，它们是公开方法，同时也能够访问私有变量。如果需要创建一些不需要访问私有属性的方法的话，可以在<code>Fruit.prototype</code>上进行创建。通过这种方式创建的方法，不能直接访问私有变量，但是可以通过<code>getColor</code>这样的特权方法进行间接访问。</p>
 <p>当然这种方式也有弊端，如果特权方法过多，会占用较多内存，因为通过构造函数创建的实例都保存了特权方法的副本，而原型上的方法只有一份。因此，在设计构造函数时，需要进行慎重考虑。</p>
@@ -231,130 +101,12 @@ Fruit.prototype = {
 <h3 id="静态方法和属性">静态方法和属性</h3>
 <p>前述的闭包创建对象法可以创建私用属性和方法，但是这样的话，这些属性在创建子类时会同时创建副本存于子类，造成内存的浪费。对于一些只需要在类层面进行操作和访问的属性，可以利用闭包创建静态成员。静态成员每个只有一份，直接通过类对象进行访问。</p>
 <p>仍然以之前的<code>Orange</code>类为例，使用闭包特性添加一些静态成员：</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-</pre></td><td class="code"><pre><span class="keyword">var</span> Orange = (<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-  <span class="comment">// 私用静态属性</span>
-  <span class="keyword">var</span> numOfOranges = <span class="number">0</span>;
-
-  <span class="comment">// 私用静态方法</span>
-  <span class="function"><span class="keyword">function</span> <span class="title">checkColor</span><span class="params">()</span> {</span>
-    ...
-  }
-
-  <span class="comment">// 返回构造器</span>
-  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span><span class="params">(newColor, weight)</span> {</span>
-    <span class="keyword">var</span> color, weight;
-
-    <span class="comment">// 特权方法</span>
-    <span class="keyword">this</span>.getColor = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-      <span class="keyword">return</span> color;
-    };
-    <span class="keyword">this</span>.setColor = <span class="function"><span class="keyword">function</span><span class="params">(newColor)</span> {</span>
-      ...
-      color = newColor;
-    }
-
-    <span class="comment">// 构造器代码</span>
-    numOfOrange++;
-    <span class="keyword">if</span> (numOfOrange &gt; <span class="number">100</span>) {
-      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'Only 100 instances of Orange can be created.'</span>);
-    }
-
-    <span class="keyword">this</span>.setColor(newColor);
-  }
-})();
-
-<span class="comment">// 公开静态方法</span>
-Orange.turnToJuice = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span> <span class="comment">// 不添加在Orange的prototype上</span>
-  ...
-};
-
-<span class="comment">// 公开的非特权方法</span>
-Orange.prototype = {
-  checkWeight: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-    ...
-  }
-};
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Orange = (<span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">  <span class="comment">// 私用静态属性</span></div><div class="line">  <span class="keyword">var</span> numOfOranges = <span class="number">0</span>;</div><div class="line"></div><div class="line">  <span class="comment">// 私用静态方法</span></div><div class="line">  <span class="function"><span class="keyword">function</span> <span class="title">checkColor</span><span class="params">()</span> </span>{</div><div class="line">    ...</div><div class="line">  }</div><div class="line"></div><div class="line">  <span class="comment">// 返回构造器</span></div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span><span class="params">(newColor, weight)</span> </span>{</div><div class="line">    <span class="keyword">var</span> color, weight;</div><div class="line"></div><div class="line">    <span class="comment">// 特权方法</span></div><div class="line">    <span class="keyword">this</span>.getColor = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">      <span class="keyword">return</span> color;</div><div class="line">    };</div><div class="line">    <span class="keyword">this</span>.setColor = <span class="function"><span class="keyword">function</span><span class="params">(newColor)</span> </span>{</div><div class="line">      ...</div><div class="line">      color = newColor;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// 构造器代码</span></div><div class="line">    numOfOrange++;</div><div class="line">    <span class="keyword">if</span> (numOfOrange &gt; <span class="number">100</span>) {</div><div class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'Only 100 instances of Orange can be created.'</span>);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keyword">this</span>.setColor(newColor);</div><div class="line">  }</div><div class="line">})();</div><div class="line"></div><div class="line"><span class="comment">// 公开静态方法</span></div><div class="line">Orange.turnToJuice = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{ <span class="comment">// 不添加在Orange的prototype上</span></div><div class="line">  ...</div><div class="line">};</div><div class="line"></div><div class="line"><span class="comment">// 公开的非特权方法</span></div><div class="line">Orange.prototype = {</div><div class="line">  checkWeight: <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">    ...</div><div class="line">  }</div><div class="line">};</div></pre></td></tr></table></figure>
 
 <p>这与之前的闭包创建类的最大区别在于构造器由一个普通函数变成了一个内嵌函数，通过一个自执行函数的返回值赋给<code>Orange</code>。在实例化<code>Orange</code>时，调用的是返回的内嵌函数，外层函数只是一个用来存放静态私用成员的闭包。在构造器中的特权方法可以访问构造器之外的静态属性和方法，而静态方法不能访问任何定义在构造器中的私用属性。</p>
 <h3 id="常量">常量</h3>
 <p>常量就是不能被修改的变量，利用静态属性可以在JavaScript中模拟常量。对常量只创建作为取值器的静态方法，而不创建赋值器，在外围作用域中也不能访问到常量：</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-</pre></td><td class="code"><pre><span class="keyword">var</span> Class = (<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-  <span class="comment">// 常量</span>
-  <span class="keyword">var</span> CONST = <span class="number">100</span>;
-
-  <span class="comment">// 构造器</span>
-  <span class="keyword">var</span> constructorFunc = <span class="function"><span class="keyword">function</span><span class="params">(param)</span> {</span>
-    ...
-  };
-
-  <span class="comment">// 静态方法，取值器</span>
-  constructorFunc = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-    <span class="keyword">return</span> CONST;
-  };
-
-  <span class="keyword">return</span> constructorFunc;
-})();
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Class = (<span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">  <span class="comment">// 常量</span></div><div class="line">  <span class="keyword">var</span> CONST = <span class="number">100</span>;</div><div class="line"></div><div class="line">  <span class="comment">// 构造器</span></div><div class="line">  <span class="keyword">var</span> constructorFunc = <span class="function"><span class="keyword">function</span><span class="params">(param)</span> </span>{</div><div class="line">    ...</div><div class="line">  };</div><div class="line"></div><div class="line">  <span class="comment">// 静态方法，取值器</span></div><div class="line">  constructorFunc = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">    <span class="keyword">return</span> CONST;</div><div class="line">  };</div><div class="line"></div><div class="line">  <span class="keyword">return</span> constructorFunc;</div><div class="line">})();</div></pre></td></tr></table></figure>
 
 <h2 id="封装之利弊">封装之利弊</h2>
 <h3 id="封装之利">封装之利</h3>

@@ -67,153 +67,23 @@
 
 <h2 id="简单工厂模式">简单工厂模式</h2>
 <p>一个工厂可以生产同一类的多种物品，具体生产哪种就看客户下什么订单了。工厂模式也是一样，我们创建一个工厂类，它可以创建多种实例，由开发者指定。<br>假设有一个生产交通工具的工厂类<code>Vehicle</code>，它包含生成多种交通工具实例的方法。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">Vehicle</span><span class="params">()</span> {</span>}
-
-Vehicle.prototype = {
-  createVihicle: <span class="function"><span class="keyword">function</span><span class="params">(options)</span> {</span>
-    <span class="keyword">var</span> vehicle;
-
-    <span class="keyword">switch</span>(options.type) {
-      <span class="keyword">case</span> <span class="string">'car'</span>:
-        vehicle = <span class="keyword">new</span> Car();
-        <span class="keyword">break</span>;
-      <span class="keyword">case</span> <span class="string">'truck'</span>:
-        vehicle = <span class="keyword">new</span> Truck();
-        <span class="keyword">break</span>;
-      <span class="keyword">default</span>:
-        vehicle = <span class="keyword">new</span> Bike();
-    }
-
-    <span class="keyword">return</span> vehicle;
-  }
-};
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Vehicle</span><span class="params">()</span> </span>{}</div><div class="line"></div><div class="line">Vehicle.prototype = {</div><div class="line">  createVihicle: <span class="function"><span class="keyword">function</span><span class="params">(options)</span> </span>{</div><div class="line">    <span class="keyword">var</span> vehicle;</div><div class="line"></div><div class="line">    <span class="keyword">switch</span>(options.type) {</div><div class="line">      <span class="keyword">case</span> <span class="string">'car'</span>:</div><div class="line">        vehicle = <span class="keyword">new</span> Car();</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      <span class="keyword">case</span> <span class="string">'truck'</span>:</div><div class="line">        vehicle = <span class="keyword">new</span> Truck();</div><div class="line">        <span class="keyword">break</span>;</div><div class="line">      <span class="keyword">default</span>:</div><div class="line">        vehicle = <span class="keyword">new</span> Bike();</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keyword">return</span> vehicle;</div><div class="line">  }</div><div class="line">};</div></pre></td></tr></table></figure>
 
 <p>在使用这个类生产对象的时候，传入<code>option</code>参数，在参数中的<code>type</code>属性规定我们需要的类型，构造函数就能够返回我们需要的对象类型了。使用这种方法，如果我们要添加新的交通工具类型也是很方便的，在工厂的<code>switch</code>中直接添加一个<code>case</code>就可以了。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-</pre></td><td class="code"><pre><span class="keyword">switch</span>(options.type) {
-  <span class="keyword">case</span> <span class="string">'car'</span>:
-    vehicle = <span class="keyword">new</span> Car();
-    <span class="keyword">break</span>;
-  <span class="keyword">case</span> <span class="string">'truck'</span>:
-    vehicle = <span class="keyword">new</span> Truck();
-    <span class="keyword">break</span>;
-  <span class="keyword">case</span> <span class="string">'plane'</span>:
-    vehicle = <span class="keyword">new</span> Plane();
-    <span class="keyword">break</span>;
-  <span class="keyword">default</span>:
-    vehicle = <span class="keyword">new</span> Bike();
-}
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">switch</span>(options.type) {</div><div class="line">  <span class="keyword">case</span> <span class="string">'car'</span>:</div><div class="line">    vehicle = <span class="keyword">new</span> Car();</div><div class="line">    <span class="keyword">break</span>;</div><div class="line">  <span class="keyword">case</span> <span class="string">'truck'</span>:</div><div class="line">    vehicle = <span class="keyword">new</span> Truck();</div><div class="line">    <span class="keyword">break</span>;</div><div class="line">  <span class="keyword">case</span> <span class="string">'plane'</span>:</div><div class="line">    vehicle = <span class="keyword">new</span> Plane();</div><div class="line">    <span class="keyword">break</span>;</div><div class="line">  <span class="keyword">default</span>:</div><div class="line">    vehicle = <span class="keyword">new</span> Bike();</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>通过这种方式，将成员对象的创建工作转交给外部对象，可以像上述代码一样转交给独立的命名空间，像<code>Car</code>，<code>Truck</code>，<code>Plane</code>等，如果外部对象属于同一类的话，将它们组织为一个大类中的子类比较合理。</p>
 <h2 id="工厂模式">工厂模式</h2>
 <p>以上介绍的是简单工厂模式，简单工厂模式会把创建工作交给<strong>外部</strong>的类来做，这实际上会增加类的数量，并不利于代码的组织。真正的工厂模式会把创建工作交给子类来完成，父类只对创建过程中的一般性问题进行处理，这些处理会影响到每个子类，而子类之间相互独立，可以对创建过程进行一些定制化操作。</p>
 <p>还是以生产交通工具为例，将交通工具父类改写为一个<strong>抽象类</strong>，它不负责直接生产交通工具，而是通过它派生出一些子类，这些子类代表不同的国家，不同的国家可以生产自己的交通工具。</p>
 <p>将父类抽象化：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">Vehicle</span><span class="params">()</span> {</span>}
-
-Vehicle.prototype = {
-  createVihicle: <span class="function"><span class="keyword">function</span><span class="params">(options)</span> {</span>
-    <span class="comment">// 这里不直接生产，如果直接调用会抛出错误</span>
-    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'Unsupported operation on an abstract class.'</span>)
-  }
-};
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Vehicle</span><span class="params">()</span> </span>{}</div><div class="line"></div><div class="line">Vehicle.prototype = {</div><div class="line">  createVihicle: <span class="function"><span class="keyword">function</span><span class="params">(options)</span> </span>{</div><div class="line">    <span class="comment">// 这里不直接生产，如果直接调用会抛出错误</span></div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'Unsupported operation on an abstract class.'</span>)</div><div class="line">  }</div><div class="line">};</div></pre></td></tr></table></figure>
 
 <p>不同的国家作为子类，子类首先对父类进行继承，然后实现自己的<code>createVehicle</code>方法。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">China</span><span class="params">()</span> {</span>}
-
-<span class="comment">// 继承方法</span>
-extend(China, Vehicle);
-
-<span class="comment">// 实现自己的createVehicle方法</span>
-China.prototype.createVehicle = <span class="function"><span class="keyword">function</span><span class="params">(options)</span> {</span>
-  <span class="keyword">var</span> vehicle;
-
-  <span class="keyword">switch</span>(options.type) {
-    <span class="keyword">case</span> <span class="string">'car'</span>:
-      vehicle = <span class="keyword">new</span> Car();
-      <span class="keyword">break</span>;
-    <span class="keyword">case</span> <span class="string">'truck'</span>:
-      vehicle = <span class="keyword">new</span> Truck();
-      <span class="keyword">break</span>;
-    <span class="keyword">default</span>:
-      vehicle = <span class="keyword">new</span> Bike();
-  }
-
-  <span class="keyword">return</span> vehicle;
-}
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">China</span><span class="params">()</span> </span>{}</div><div class="line"></div><div class="line"><span class="comment">// 继承方法</span></div><div class="line">extend(China, Vehicle);</div><div class="line"></div><div class="line"><span class="comment">// 实现自己的createVehicle方法</span></div><div class="line">China.prototype.createVehicle = <span class="function"><span class="keyword">function</span><span class="params">(options)</span> </span>{</div><div class="line">  <span class="keyword">var</span> vehicle;</div><div class="line"></div><div class="line">  <span class="keyword">switch</span>(options.type) {</div><div class="line">    <span class="keyword">case</span> <span class="string">'car'</span>:</div><div class="line">      vehicle = <span class="keyword">new</span> Car();</div><div class="line">      <span class="keyword">break</span>;</div><div class="line">    <span class="keyword">case</span> <span class="string">'truck'</span>:</div><div class="line">      vehicle = <span class="keyword">new</span> Truck();</div><div class="line">      <span class="keyword">break</span>;</div><div class="line">    <span class="keyword">default</span>:</div><div class="line">      vehicle = <span class="keyword">new</span> Bike();</div><div class="line">  }</div><div class="line"></div><div class="line">  <span class="keyword">return</span> vehicle;</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>以后要生产交通工具的时候就调用<code>China</code>子类的<code>createVehicle</code>方法就可以了。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-2
-</pre></td><td class="code"><pre><span class="keyword">var</span> chinaVehicle = <span class="keyword">new</span> China();
-<span class="keyword">var</span> myCar = chinaVehicle.createVehicle({ type: <span class="string">'Car'</span> });
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> chinaVehicle = <span class="keyword">new</span> China();</div><div class="line"><span class="keyword">var</span> myCar = chinaVehicle.createVehicle({ type: <span class="string">'Car'</span> });</div></pre></td></tr></table></figure>
 
 <p>一般性的代码集中在父类中，个性化的代码在子类中单独定制。</p>
 <h2 id="工厂模式适用场合">工厂模式适用场合</h2>

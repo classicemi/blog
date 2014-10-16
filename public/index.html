@@ -64,17 +64,7 @@
     <div class="entry">
       
         <p>最近在开发组件的过程中，需要随时监控整个组件对象的构建，包括对象上的属性方法的变更，以及原型链的变化。本来，在测试代码中加一个<code>console.log</code>：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-</pre></td><td class="code"><pre><span class="keyword">var</span> d = <span class="keyword">new</span> dialog({
-    ...
-});
-console.log(<span class="string">'final object'</span>, d);
-d.show();
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> d = <span class="keyword">new</span> dialog({</div><div class="line">    ...</div><div class="line">});</div><div class="line"><span class="built_in">console</span>.log(<span class="string">'final object'</span>, d);</div><div class="line">d.show();</div></pre></td></tr></table></figure>
 
 <p>就可以观察最终生成的组件对象是否符合我的预期，也没出过什么问题，也没理由会出现什么问题，直到调试过程中出现了这样的情况：</p>
 
@@ -340,7 +330,7 @@ d.show();
     </header>
     <div class="entry">
       
-        <p>Flexible Box是什么？Flexible意为可伸缩的，Box意为盒子，可以理解为一种新式的盒模型——<strong>伸缩盒模型</strong>。由<a href="http://www.w3.org/TR/2014/WD-css-flexbox-1-20140325/" target="_blank">CSS3规范</a>提出，这是在原有的大家非常熟悉的<code>block</code>, <code>inline-block</code>, <code>inline</code>的基础上延伸出的新一代布局模式。</p>
+        <p>Flexible Box是什么？Flexible意为可伸缩的，Box意为盒子，可以理解为一种新式的盒模型——<strong>伸缩盒模型</strong>。由<a href="http://www.w3.org/TR/2014/WD-css-flexbox-1-20140325/" target="_blank" rel="external">CSS3规范</a>提出，这是在原有的大家非常熟悉的<code>block</code>, <code>inline-block</code>, <code>inline</code>的基础上延伸出的新一代布局模式。</p>
 <h2 id="浏览器兼容性">浏览器兼容性</h2>
 <p>作为非常现实的开发者，是否对一个新技术进行关注，首先要考虑它的浏览器兼容性如何。我们的伸缩盒模型的浏览器兼容性看起来还是相当不错的。</p>
 

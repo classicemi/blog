@@ -70,154 +70,20 @@
 <h2 id="简单的门面模式实例——事件绑定函数">简单的门面模式实例——事件绑定函数</h2>
 <p>门面模式的作用是将复杂的接口进行包装，变成一个便于使用的接口。在很多的JavaScript库中都能找到门面模式的应用，例如jQuery，我们在用jQuery进行事件绑定的时候，简单的调用<code>bind()</code>，<code>on()</code>等方法就可以了，并不用对不同浏览器的兼容性问题进行处理，兼容性的处理在jQuery内部已经完成，就是通过门面的思想。</p>
 <p>我们就以事件绑定为例，来展现一下门面模式是什么：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-</pre></td><td class="code"><pre><span class="comment">// 实现一个通用的，跨多种浏览器的时间绑定函数</span>
-<span class="function"><span class="keyword">function</span> <span class="title">addEvent</span><span class="params">(el, type, fn)</span> {</span>
-  <span class="keyword">if</span> (window.addEventListener) {
-    el.addEventListener(type, fn, <span class="literal">false</span>);
-  } <span class="keyword">else</span> <span class="keyword">if</span> (window.attachEvent) {
-    el.attachEvent(<span class="string">'on'</span> + type, fn);
-  } <span class="keyword">else</span> {
-    el[<span class="string">'on'</span> + type] = fn;
-  }
-}
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 实现一个通用的，跨多种浏览器的时间绑定函数</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">addEvent</span><span class="params">(el, type, fn)</span> </span>{</div><div class="line">  <span class="keyword">if</span> (<span class="built_in">window</span>.addEventListener) {</div><div class="line">    el.addEventListener(type, fn, <span class="literal">false</span>);</div><div class="line">  } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">window</span>.attachEvent) {</div><div class="line">    el.attachEvent(<span class="string">'on'</span> + type, fn);</div><div class="line">  } <span class="keyword">else</span> {</div><div class="line">    el[<span class="string">'on'</span> + type] = fn;</div><div class="line">  }</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>通过<strong>能力检测</strong>，对浏览器支持的API进行判断，自动调用有效的事件绑定API来绑定时间。开发者在绑定时间的时候，就不需要写冗长的判断代码，直接专注于业务就好，这是门面模式带来的最直接的便利。</p>
 <p>这里门面模式的作用是处理浏览器的<strong>兼容性</strong>，门面模式的另一个作用是对多个函数进行<strong>组合</strong>管理。</p>
 <p>还是以事件相关API为例，事件绑定中还有两个常用的API分别是<code>event.stopPropagation()</code>和<code>event.preventDefault()</code>。这两个API在IE浏览器中是不兼容的，在IE中它们分别对应的是<code>event.cancelBubble = true</code>和<code>event.returnValue = false</code>。通过门面模式我们的目标是：<br>没有蛀牙~~~<br>以及：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-</pre></td><td class="code"><pre>+---------------+      +------------+      +--------------+      +-----------+
-|stopPropagation|      |cancelBubble|      |preventDefault|      |returnValue|
-+---------------+      +------------+      +--------------+      +-----------+
-        |                    |                    |                        |
-        +--------------------+                    +------------------------+
-                   ↓                                          ↓
-           +---------------+                           +--------------+
-           |stopPropagation|                           |preventDefault|
-           +---------------+                           +--------------+
-                   |                wrapped in                 |
-                   +-------------------------------------------+
-                                        ↓
-                          +-----------------------------+
-                          |          ╭ stopPropagation |
-                          | stopEvent                   |
-                          |          ╰ preventDefault  |
-                          +-----------------------------+
-</pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">+---------------+      +------------+      +--------------+      +-----------+</div><div class="line">|stopPropagation|      |cancelBubble|      |preventDefault|      |returnValue|</div><div class="line">+---------------+      +------------+      +--------------+      +-----------+</div><div class="line">        |                    |                    |                        |</div><div class="line">        +--------------------+                    +------------------------+</div><div class="line">                   ↓                                          ↓</div><div class="line">           +---------------+                           +--------------+</div><div class="line">           |stopPropagation|                           |preventDefault|</div><div class="line">           +---------------+                           +--------------+</div><div class="line">                   |                wrapped in                 |</div><div class="line">                   +-------------------------------------------+</div><div class="line">                                        ↓</div><div class="line">                          +-----------------------------+</div><div class="line">                          |          ╭ stopPropagation |</div><div class="line">                          | stopEvent                   |</div><div class="line">                          |          ╰ preventDefault  |</div><div class="line">                          +-----------------------------+</div></pre></td></tr></table></figure>
 
 <p>通过代码事件就是这样：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-</pre></td><td class="code"><pre><span class="keyword">var</span> eventUtil = {
-  stopPropagation: <span class="function"><span class="keyword">function</span><span class="params">(ev)</span> {</span>
-    <span class="keyword">if</span> (ev.stopPropagation) {
-      ev.stopPropagation();
-    } <span class="keyword">else</span> {
-      ev.cancelBubble = <span class="literal">true</span>;
-    }
-  },
-  preventDefault: <span class="function"><span class="keyword">function</span><span class="params">(ev)</span> {</span>
-    <span class="keyword">if</span> (ev.preventDefault) {
-      ev.preventDefault();
-    } <span class="keyword">else</span> {
-      ev.returnValue = <span class="literal">false</span>;
-    }
-  },
-  stopEvent: <span class="function"><span class="keyword">function</span><span class="params">(ev)</span> {</span>
-    eventUtil.stopPropagation(ev);
-    eventUtil.preventDefault(ev);
-  }
-}
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> eventUtil = {</div><div class="line">  stopPropagation: <span class="function"><span class="keyword">function</span><span class="params">(ev)</span> </span>{</div><div class="line">    <span class="keyword">if</span> (ev.stopPropagation) {</div><div class="line">      ev.stopPropagation();</div><div class="line">    } <span class="keyword">else</span> {</div><div class="line">      ev.cancelBubble = <span class="literal">true</span>;</div><div class="line">    }</div><div class="line">  },</div><div class="line">  preventDefault: <span class="function"><span class="keyword">function</span><span class="params">(ev)</span> </span>{</div><div class="line">    <span class="keyword">if</span> (ev.preventDefault) {</div><div class="line">      ev.preventDefault();</div><div class="line">    } <span class="keyword">else</span> {</div><div class="line">      ev.returnValue = <span class="literal">false</span>;</div><div class="line">    }</div><div class="line">  },</div><div class="line">  stopEvent: <span class="function"><span class="keyword">function</span><span class="params">(ev)</span> </span>{</div><div class="line">    eventUtil.stopPropagation(ev);</div><div class="line">    eventUtil.preventDefault(ev);</div><div class="line">  }</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>这样，在事件绑定函数中，如果需要取消冒泡和默认事件的话，直接调用<code>eventUtil.stopEvent(ev)</code>即可，该方法将所需的子方法进行了包装，也处理了兼容性问题。</p>
 <h2 id="门面模式在模块中的应用">门面模式在模块中的应用</h2>
 <p>结合以前说过的对象创建模式，门面模式可以应用在模块之中，通过对私用方法的包装提供简化的公用方法，开发者维护模块时只需修改私用方法就可以调整公用方法的实现。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-</pre></td><td class="code"><pre><span class="keyword">var</span> orange = (<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-  <span class="comment">// 私用方法包装对象</span>
-  <span class="keyword">var</span> _privateMethod = {
-    orangeValue: <span class="number">10</span>,
-    getValue: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-      console.log(<span class="keyword">this</span>.orangeValue);
-    },
-    setValue: <span class="function"><span class="keyword">function</span><span class="params">(value)</span> {</span>
-      <span class="keyword">this</span>.orangeValue = value;
-    }
-  }
-
-  <span class="comment">// 返回公用方法</span>
-  <span class="keyword">return</span> {
-    setOrangeValue: <span class="function"><span class="keyword">function</span><span class="params">(value)</span> {</span>
-      _privateMethod.setValue(value);
-      _privateMethod.getValue();
-    }
-  }
-})();
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> orange = (<span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">  <span class="comment">// 私用方法包装对象</span></div><div class="line">  <span class="keyword">var</span> _privateMethod = {</div><div class="line">    orangeValue: <span class="number">10</span>,</div><div class="line">    getValue: <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">      <span class="built_in">console</span>.log(<span class="keyword">this</span>.orangeValue);</div><div class="line">    },</div><div class="line">    setValue: <span class="function"><span class="keyword">function</span><span class="params">(value)</span> </span>{</div><div class="line">      <span class="keyword">this</span>.orangeValue = value;</div><div class="line">    }</div><div class="line">  }</div><div class="line"></div><div class="line">  <span class="comment">// 返回公用方法</span></div><div class="line">  <span class="keyword">return</span> {</div><div class="line">    setOrangeValue: <span class="function"><span class="keyword">function</span><span class="params">(value)</span> </span>{</div><div class="line">      _privateMethod.setValue(value);</div><div class="line">      _privateMethod.getValue();</div><div class="line">    }</div><div class="line">  }</div><div class="line">})();</div></pre></td></tr></table></figure>
 
 <p>门面模式能提供编写方式的灵活性，通过对底层子方法的封装，既简化了代码又降低了对底层系统的耦合。在大型系统工具库的使用中有重要的意义。但在实际项目中还是要考虑代码量的<strong>轻便性</strong>，如果业务只需要一些小粒度的方法的话，就没有必要使用包装了很多无用方法的门面函数了，这需要开发者灵活判断。</p>
 

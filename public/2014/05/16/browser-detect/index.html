@@ -67,101 +67,45 @@
 
 <h2 id="jQuery解决方案">jQuery解决方案</h2>
 <p>分析<code>window.navigator.userAgent</code>。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-</pre></td><td class="code"><pre><span class="keyword">var</span> ua = window.navigator.userAgent;
-
-<span class="comment">// 亲测可能会存在问题</span>
-<span class="keyword">var</span> match = <span class="regexp">/(Chrome)[ \/]([\w.]+)/</span>.exec(ua) ||
-            <span class="regexp">/(Webkit)[ \/]([\w.]+)/</span>.exec(ua) ||
-            <span class="regexp">/(OPR)(?:.*version|)[ \/]([\w.]+)/</span>.exec(ua) ||
-            <span class="regexp">/(MSIE) ([\w.]+)/</span>.exec(ua) ||
-            ua.indexOf(<span class="string">'compatible'</span>) &lt; <span class="number">0</span> && <span class="regexp">/(Mozilla)(?:.*?rv:([\w.]+)|)/</span>.exec(ua) || [];
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> ua = <span class="built_in">window</span>.navigator.userAgent;</div><div class="line"></div><div class="line"><span class="comment">// 亲测可能会存在问题</span></div><div class="line"><span class="keyword">var</span> match = <span class="regexp">/(Chrome)[ \/]([\w.]+)/</span>.exec(ua) ||</div><div class="line">            <span class="regexp">/(Webkit)[ \/]([\w.]+)/</span>.exec(ua) ||</div><div class="line">            <span class="regexp">/(OPR)(?:.*version|)[ \/]([\w.]+)/</span>.exec(ua) ||</div><div class="line">            <span class="regexp">/(MSIE) ([\w.]+)/</span>.exec(ua) ||</div><div class="line">            ua.indexOf(<span class="string">'compatible'</span>) &lt; <span class="number">0</span> && <span class="regexp">/(Mozilla)(?:.*?rv:([\w.]+)|)/</span>.exec(ua) || [];</div></pre></td></tr></table></figure>
 
 <p>匹配的分句会返回如图所示的数组，包含浏览器型号与版本号：<br><img src="/img/browser-detect-firefox.jpg" alt=""></p>
 <p>移动平台的检测：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-2
-3
-</pre></td><td class="code"><pre><span class="keyword">var</span> platform_match = <span class="regexp">/(ipad)/</span>.exec(ua) ||
-                     <span class="regexp">/(iphone)/</span>.exec(ua) ||
-                     <span class="regexp">/(android)/</span>.exec(ua) || [];
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> platform_match = <span class="regexp">/(ipad)/</span>.exec(ua) ||</div><div class="line">                     <span class="regexp">/(iphone)/</span>.exec(ua) ||</div><div class="line">                     <span class="regexp">/(android)/</span>.exec(ua) || [];</div></pre></td></tr></table></figure>
 
 <p>这个没有测。</p>
 <p>返回一个结果对象就行了：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-</pre></td><td class="code"><pre><span class="keyword">return</span> {
-  browser: match[<span class="number">1</span>],
-  version: match[<span class="number">2</span>],
-  platform: platform_match[<span class="number">0</span>] || <span class="string">''</span>
-}
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> {</div><div class="line">  browser: match[<span class="number">1</span>],</div><div class="line">  version: match[<span class="number">2</span>],</div><div class="line">  platform: platform_match[<span class="number">0</span>] || <span class="string">''</span></div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>一般浏览器的信息这样检测就基本能满足了，对于某些特定功能，建议用能力检测而不是浏览器检测。</p>
 <h2 id="通过能力检测判断浏览器">通过能力检测判断浏览器</h2>
 <p>我认为这是比检测<code>navigator.userAgent</code>更好的方法。这样可以检测出更多浏览器的版本信息，例如判断IE浏览器的版本，非常有用：<br><strong>IE</strong></p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-</pre></td><td class="code"><pre>ie = !!document.recalc;
-ie = !!window.VBArray;
-ie = !!window.ActiveXObject;
-ie = !!document.createPopup;
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ie = !!<span class="built_in">document</span>.recalc;</div><div class="line">ie = !!<span class="built_in">window</span>.VBArray;</div><div class="line">ie = !!<span class="built_in">window</span>.ActiveXObject;</div><div class="line">ie = !!<span class="built_in">document</span>.createPopup;</div></pre></td></tr></table></figure>
 
 <p>以上为通过能力检测判断是否为IE浏览器的方法。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-</pre></td><td class="code"><pre>ie = <span class="comment">/*@cc_on!@*/</span>!<span class="number">1</span>;
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ie = <span class="comment">/*@cc_on!@*/</span>!<span class="number">1</span>;</div></pre></td></tr></table></figure>
 
 <p>这是IE中特有的条件编译（conditional compilation）注释，可以写在脚本的开头。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-</pre></td><td class="code"><pre>ie = document.expando; <span class="comment">// 常用document.all有bug，在firefox和opera的古老版本中也存在</span>
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ie = <span class="built_in">document</span>.expando; <span class="comment">// 常用document.all有bug，在firefox和opera的古老版本中也存在</span></div></pre></td></tr></table></figure>
 
 <p>IE9+中似乎无效。</p>
 <p><strong>特定版本的IE</strong><br><em>IE678</em></p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-</pre></td><td class="code"><pre>ie678 = !+<span class="string">"\v1"</span>;
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ie678 = !+<span class="string">"\v1"</span>;</div></pre></td></tr></table></figure>
 
 <p>IE678不能吧<code>\v</code>解释为垂直符，只能表现为<code>&quot;v&quot;</code>字符串，<code>+</code>号转换为数字失败，转换为NaN，取反得<code>true</code>。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-</pre></td><td class="code"><pre>ie678 = !-[<span class="number">1</span>, ];
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ie678 = !-[<span class="number">1</span>, ];</div></pre></td></tr></table></figure>
 
 <p>IE678中调用<code>toString()</code>方法得到<code>&quot;1,&quot;</code>，取负返回NaN，再取反得<code>true</code>。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-</pre></td><td class="code"><pre>ie678 = <span class="string">'\v'</span> == <span class="string">'v'</span>;
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ie678 = <span class="string">'\v'</span> == <span class="string">'v'</span>;</div></pre></td></tr></table></figure>
 
 <p>这个原理已经说了。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-</pre></td><td class="code"><pre>ie678 = (<span class="string">'a~b'</span>.split(<span class="regexp">/(~)/</span>))[<span class="number">1</span>] == <span class="string">'b'</span>;
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ie678 = (<span class="string">'a~b'</span>.split(<span class="regexp">/(~)/</span>))[<span class="number">1</span>] == <span class="string">'b'</span>;</div></pre></td></tr></table></figure>
 
 <p>IE678版本<code>split</code>方法返回的是<code>[&#39;a&#39;, &#39;~&#39;, &#39;b&#39;]</code>数组，IE9+版本返回<code>[&#39;a&#39;, &#39;b&#39;]</code>。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-</pre></td><td class="code"><pre>ie678 = <span class="number">0.9</span>.toFixed(<span class="number">0</span>) == <span class="string">'0'</span>;
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ie678 = <span class="number">0.9</span>.toFixed(<span class="number">0</span>) == <span class="string">'0'</span>;</div></pre></td></tr></table></figure>
 
 <p>此方法在Win8平台下通过IE10开发者工具模拟IE8-版本发现无效，返回值都为<code>&#39;1&#39;</code>，不知原生版本是否有效。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre>1
-</pre></td><td class="code"><pre>ie678 = <span class="regexp">/\w/</span>.test(<span class="string">'\u0130'</span>);
-</pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ie678 = <span class="regexp">/\w/</span>.test(<span class="string">'\u0130'</span>);</div></pre></td></tr></table></figure>
 
 
       

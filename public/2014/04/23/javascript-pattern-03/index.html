@@ -73,175 +73,43 @@
 <h3 id="类式继承">类式继承</h3>
 <p>类式继承的特点就是使用函数声明类，通过<code>new</code>关键字创建实例。</p>
 <p>创建类的方法很简单，一般可以写成这样：</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">Blog</span><span class="params">(address)</span> {</span>
-  <span class="keyword">this</span>.address = address;
-}
-
-Blog.prototype.getAddress = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-  <span class="keyword">return</span> <span class="keyword">this</span>.address;
-}
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">Blog</span><span class="params">(address)</span> </span>{</div><div class="line">  <span class="keyword">this</span>.address = address;</div><div class="line">}</div><div class="line"></div><div class="line">Blog.prototype.getAddress = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.address;</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>创建该类的实例通过<code>new</code>关键字即可：</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-2
-</pre></td><td class="code"><pre><span class="keyword">var</span> blog = <span class="keyword">new</span> Blog(<span class="string">'classicemi.github.io'</span>);
-blog.getAddress(); <span class="comment">// 'classicemi.github.io'</span>
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> blog = <span class="keyword">new</span> Blog(<span class="string">'classicemi.github.io'</span>);</div><div class="line">blog.getAddress(); <span class="comment">// 'classicemi.github.io'</span></div></pre></td></tr></table></figure>
 
 <p>当使用<code>new</code>关键字时，它和通过一般方式执行函数的区别在于函数的执行方式会改变。当使用<code>new</code>关键字执行<code>Blog</code>类的构造函数时，系统首先创建一个新对象，这个对象会继承自构造函数<code>Blog</code>的原型对象（新对象的原型就是构造函数的<code>prototype</code>属性）。再将<code>this</code>关键字绑定到新对象上，再返回该新对象。也就是说，构造函数用来对生成的新对象进行一些处理，使这个新对象具有某些特定的属性。</p>
 <p>创建一个继承<code>Blog</code>的类就需要手工完成和<code>new</code>运算符相似的工作了。</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">MyBlog</span><span class="params">(address, author)</span> {</span>
-  Blog.call(<span class="keyword">this</span>, address);
-  <span class="keyword">this</span>.author = author;
-}
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">MyBlog</span><span class="params">(address, author)</span> </span>{</div><div class="line">  Blog.call(<span class="keyword">this</span>, address);</div><div class="line">  <span class="keyword">this</span>.author = author;</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>当通过<code>new</code>关键字调用<code>MyBlog</code>构造函数时，系统会创建一个新对象（这步是自动的，<code>this</code>即为这个新对象），然后在<code>this</code>上调用超类<code>Blog</code>的构造函数，再给<code>this</code>添加一些<code>MyBlog</code>类特有的不是继承自<code>Blog</code>类的属性，最后将新对象<code>this</code>返回（这步也是自动的）。</p>
 <p>下面为了继承<code>Blog</code>类的方法，需要设置原型链，使<code>MyBlog</code>类能够在原型链上找到继承自<code>Blog</code>类的方法。</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-</pre></td><td class="code"><pre>MyBlog.prototype = <span class="keyword">new</span> Blog(); <span class="comment">// MyBlog类的原型是Blog类的一个实例</span>
-MyBlog.prototype.constructor = MyBlog; <span class="comment">// 上一步执行后prototype的constructor属性会变成Blog，需要修改回来</span>
-MyBlog.prototype.getAuthor = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span> <span class="comment">// 给MyBlog添加自己的方法</span>
-  <span class="keyword">return</span> <span class="keyword">this</span>.author;
-}
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">MyBlog.prototype = <span class="keyword">new</span> Blog(); <span class="comment">// MyBlog类的原型是Blog类的一个实例</span></div><div class="line">MyBlog.prototype.constructor = MyBlog; <span class="comment">// 上一步执行后prototype的constructor属性会变成Blog，需要修改回来</span></div><div class="line">MyBlog.prototype.getAuthor = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{ <span class="comment">// 给MyBlog添加自己的方法</span></div><div class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.author;</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>通过这些操作后，<code>MyBlog</code>类就声明好了，它继承了<code>Blog</code>类的属性和方法，创建<code>MyBlog</code>类实例的方法和创建<code>Blog</code>类实例的方法一样，直接使用<code>new</code>关键字调用构造函数即可。</p>
 <h3 id="原型式继承">原型式继承</h3>
 <p>之前的类式继承是为了模仿其他一些面向对象语言的特点而创造的，并没有真正体现JavaScript语言本身的特点，下面要说的原型式继承则是利用JS的原型特性而实现的继承方式。</p>
 <p>使用原型式继承时，不需要像类式继承一样用一个类（构造函数）来定义对象的结构，而可以用对象字面量的方式直接创建一个对象，这个对象是作为原型存在的，被称作原型对象(prototype object)。就像工厂生产车间里的模具一样，为以后生产出的零件提供了参考原型。</p>
 <p>还是以之前的<code>Blog</code>和<code>MyBlog</code>类为例：</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-</pre></td><td class="code"><pre><span class="comment">// Blog原型对象</span>
-<span class="keyword">var</span> Blog = {
-  address: <span class="string">'classicemi.github.io'</span>, <span class="comment">// 属性只是作为默认值，一般都会被改写</span>
-  getAddress: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-    <span class="keyword">return</span> <span class="keyword">this</span>.address;
-  }
-};
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Blog原型对象</span></div><div class="line"><span class="keyword">var</span> Blog = {</div><div class="line">  address: <span class="string">'classicemi.github.io'</span>, <span class="comment">// 属性只是作为默认值，一般都会被改写</span></div><div class="line">  getAddress: <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.address;</div><div class="line">  }</div><div class="line">};</div></pre></td></tr></table></figure>
 
 <p>这里没有像用一个构造函数来定义<code>Blog</code>类的结构，将方法添加在<code>Blog.prototype</code>上。这里定义的<code>Blog</code>对象只是作为原型存在，为继承<code>Blog</code>类的对象提供一些方法。</p>
 <p>现在原型对象有了，要创建继承该原型对象对应的类的新类应该怎么做呢？利用JS的原型链特性，只要将新类的原型设为该原型对象即可。按照这种思路可以写出子类<code>MyBlog</code>的创建方法：</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-2
-3
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">MyBlogConstrucFunc</span><span class="params">()</span> {</span>}
-MyBlogConstrucFunc.prototype = Blog;
-<span class="keyword">var</span> MyBlog = <span class="keyword">new</span> MyBlogConstrucFunc();
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">MyBlogConstrucFunc</span><span class="params">()</span> </span>{}</div><div class="line">MyBlogConstrucFunc.prototype = Blog;</div><div class="line"><span class="keyword">var</span> MyBlog = <span class="keyword">new</span> MyBlogConstrucFunc();</div></pre></td></tr></table></figure>
 
 <p>通过<code>new</code>运算符调用<code>MyBlogConstrucFunc</code>函数，返回的是一个空对象，这个空对象的<code>prototype</code>属性指向原型对象<code>Blog</code>。在返回的空对象中，还可以添加<code>MyBlog</code>类自有的属性和方法。</p>
 <p>不过通过这三行代码实现子类对超类的继承还是有些冗余，我们可以实现一个方法来实现对超类的继承，将超类作为该方法的参数传入并在最后将空对象返回即可。</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">clone</span><span class="params">(object)</span> {</span>
-  <span class="function"><span class="keyword">function</span> <span class="title">F</span><span class="params">()</span> {</span>}
-  F.prototype = object;
-  <span class="keyword">return</span> <span class="keyword">new</span> F();
-}
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">clone</span><span class="params">(object)</span> </span>{</div><div class="line">  <span class="function"><span class="keyword">function</span> <span class="title">F</span><span class="params">()</span> </span>{}</div><div class="line">  F.prototype = object;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> F();</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <h3 id="Mixin_Class">Mixin Class</h3>
 <p>以上所讨论的是比较严格的继承方式，有的时候，我们可能只想对某个函数进行重用，并不需要完全的继承，那么我们可以将函数以扩充的方式在类之间进行共享。对于重用频率比较高的方法，我们可以将它们归并在一个类中，然后用这个类去扩充其他的类。这种方法称为掺元类（mixin class）。这种处理方法在很多JS库（比如<code>jQuery</code>和<code>Underscore</code>）中都有用到，是一种扩充工具函数的好方法。</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-</pre></td><td class="code"><pre><span class="keyword">var</span> Mixin = <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>}
-Mixin.prototype = {
-  serialize: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-    <span class="keyword">var</span> output = [];
-    <span class="keyword">for</span>(key <span class="keyword">in</span> <span class="keyword">this</span>) {
-      output.push(key + <span class="string">': '</span> + <span class="keyword">this</span>[key]);
-    }
-    <span class="keyword">return</span> output.join(<span class="string">', '</span>);
-  }
-  ...
-};
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> Mixin = <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{}</div><div class="line">Mixin.prototype = {</div><div class="line">  serialize: <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{</div><div class="line">    <span class="keyword">var</span> output = [];</div><div class="line">    <span class="keyword">for</span>(key <span class="keyword">in</span> <span class="keyword">this</span>) {</div><div class="line">      output.push(key + <span class="string">': '</span> + <span class="keyword">this</span>[key]);</div><div class="line">    }</div><div class="line">    <span class="keyword">return</span> output.join(<span class="string">', '</span>);</div><div class="line">  }</div><div class="line">  ...</div><div class="line">};</div></pre></td></tr></table></figure>
 
 <p>为了能方便地将<code>Mixin</code>类中的方法添加到其他类中，我们可以扩展工具函数<code>augment</code>：</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-</pre></td><td class="code"><pre><span class="function"><span class="keyword">function</span> <span class="title">augment</span><span class="params">(receivingClass, givingClass)</span> {</span>
-  <span class="keyword">if</span> (<span class="built_in">arguments</span>[<span class="number">2</span>]) { <span class="comment">// 可接受三个参数，第三个参数为需添加的方法，多个方法可用数组将方法名传入</span>
-    <span class="keyword">if</span> (<span class="built_in">arguments</span>[<span class="number">2</span>] instanceOf <span class="built_in">Array</span>) {
-      <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, len = <span class="built_in">arguments</span>[<span class="number">2</span>].length; i &lt; len; i++) {
-        <span class="keyword">if</span> (!receivingClass.prototype[<span class="built_in">arguments</span>[<span class="number">2</span>][i]]) {
-          receivingClass.prototype[<span class="built_in">arguments</span>[<span class="number">2</span>][i]] = givingClass.prototype[<span class="built_in">arguments</span>[<span class="number">2</span>][i]];
-        }
-      }
-    } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> <span class="built_in">arguments</span>[<span class="number">2</span>] === <span class="string">'string'</span>) {
-      <span class="keyword">if</span> (!receivingClass.prototype[<span class="built_in">arguments</span>[<span class="number">2</span>]]) {
-        receivingClass.prototype[<span class="built_in">arguments</span>[<span class="number">2</span>]] = givingClass.prototype[<span class="built_in">arguments</span>[<span class="number">2</span>]];
-      }
-    }
-  } <span class="keyword">else</span> {
-    <span class="keyword">for</span> (methodName <span class="keyword">in</span> givingClass.prototype) {
-      <span class="keyword">if</span> (!receivingClass.prototype[methodName]) {
-        receivingClass.prototype[methodName] = givingClass.prototype[methodName];
-      }
-    }
-  }
-}
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">augment</span><span class="params">(receivingClass, givingClass)</span> </span>{</div><div class="line">  <span class="keyword">if</span> (<span class="built_in">arguments</span>[<span class="number">2</span>]) { <span class="comment">// 可接受三个参数，第三个参数为需添加的方法，多个方法可用数组将方法名传入</span></div><div class="line">    <span class="keyword">if</span> (<span class="built_in">arguments</span>[<span class="number">2</span>] instanceOf <span class="built_in">Array</span>) {</div><div class="line">      <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, len = <span class="built_in">arguments</span>[<span class="number">2</span>].length; i &lt; len; i++) {</div><div class="line">        <span class="keyword">if</span> (!receivingClass.prototype[<span class="built_in">arguments</span>[<span class="number">2</span>][i]]) {</div><div class="line">          receivingClass.prototype[<span class="built_in">arguments</span>[<span class="number">2</span>][i]] = givingClass.prototype[<span class="built_in">arguments</span>[<span class="number">2</span>][i]];</div><div class="line">        }</div><div class="line">      }</div><div class="line">    } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> <span class="built_in">arguments</span>[<span class="number">2</span>] === <span class="string">'string'</span>) {</div><div class="line">      <span class="keyword">if</span> (!receivingClass.prototype[<span class="built_in">arguments</span>[<span class="number">2</span>]]) {</div><div class="line">        receivingClass.prototype[<span class="built_in">arguments</span>[<span class="number">2</span>]] = givingClass.prototype[<span class="built_in">arguments</span>[<span class="number">2</span>]];</div><div class="line">      }</div><div class="line">    }</div><div class="line">  } <span class="keyword">else</span> {</div><div class="line">    <span class="keyword">for</span> (methodName <span class="keyword">in</span> givingClass.prototype) {</div><div class="line">      <span class="keyword">if</span> (!receivingClass.prototype[methodName]) {</div><div class="line">        receivingClass.prototype[methodName] = givingClass.prototype[methodName];</div><div class="line">      }</div><div class="line">    }</div><div class="line">  }</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>这时我们如果要给其他类添加<code>Mixin</code>中的方法的话可以直接这样写：</p>
-<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre>1
-</pre></td><td class="code"><pre>augment(MyBlog, Mixin);
-</pre></td></tr></table></figure>
+<figure class="highlight JavaScript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">augment(MyBlog, Mixin);</div></pre></td></tr></table></figure>
 
 <h2 id="类式继承和原型式继承的对比">类式继承和原型式继承的对比</h2>
 <p>类式继承存在的意义很大一部分是为了满足对JavaScript的特性还不熟悉的程序员，毕竟这种方法是强行为了模仿其他面向对象语言的特性而创造的。JavaScript的原型式特征在父类和子类之间建立了一种双向的联系，这是JS区别于其他语言的特点。<br>原型式继承发挥了JS的特性，所有的子类继承的方法会通过原型链逐级向父类查找，因此用于继承的方法在内存中只会保存一份，这样可以节约内存。只有在对子类的某个方法进行直接设置，将继承而来的方法覆盖的时候才会对新方法单独生成副本。</p>
