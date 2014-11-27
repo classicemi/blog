@@ -47,5 +47,21 @@ player的当前时间(current time)的计算公式为：
 ```
 当前时间 = (当前时间线时间 - 起始时间) * 播放速率
 ```
-如果有一个暂停时间(hold time)存在的话，当前时间将会等于暂停时间。
+如果有一个暂停时间(hold time)存在的话，当前时间将会等于暂停时间。  
 
+对于player，可以对其进行三种行为，分别是seeking, pausing和limiting。  
+首先是seeking：  
+顾名思义，它是一个寻址的操作，寻什么址，寻的就是当前player的播放位置，这个操作可以使当前动画的播放位置任意前进，后退，简单来说，就是改变player的当前时间位置。下面就是seeking操作的示意图：
+![](images/web-animations/seeking.png)
+可以看到，seeking操作不会对当前的timeline造成任何影响，而是让player相对于timeline移动位置。  
+
+然后是pausing：  
+对于动画来说，pausing的作用一方面是暂停，另一方面是影响动画的开始时间，先来看示意图：
+![](images/web-animations/pausing.png)
+可以看到，对于动画A来说，中间暂停的时间使得动画的实际开始时间后移。如果在pausing后又有seeking操作的话，动画的所有时间点将会全部更新。
+
+最后是limiting:  
+limiting的字面意思是限制，不过限制的是什么呢，先来看图：
+![](images/web-animations/limiting.png)
+图中，timeline是横轴而player time是纵轴，展现了player时间和实际timeline时间的相对关系，其中最重要的两个时间点是player current time和timeline的交点start time以及player time结束的拐点。在拐点之后，即使timeline的时间值仍在增加，player的时间值也不再变化了。  
+那么所谓的limiting，即是
