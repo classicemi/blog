@@ -2,6 +2,7 @@
 
 ##博文目录:
 
+- 2014.12.08 [相等判断在underscore中的实现](https://github.com/classicemi/blog/issues/7)
 - 2014.12.01 [随机排列数组在underscore的实现](https://github.com/classicemi/blog/issues/6)
 - 2014.10.31 [近期的一些思考](https://github.com/classicemi/blog/issues/5)
 - 2014.10.27 [D2 前端技术论坛流水账](https://github.com/classicemi/blog/issues/4)
