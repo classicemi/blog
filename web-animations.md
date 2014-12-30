@@ -64,4 +64,7 @@ player的当前时间(current time)的计算公式为：
 limiting的字面意思是限制，不过限制的是什么呢，先来看图：
 ![](images/web-animations/limiting.png)
 图中，timeline是横轴而player time是纵轴，展现了player时间和实际timeline时间的相对关系，其中最重要的两个时间点是player current time和timeline的交点start time以及player time结束的拐点。在拐点之后，即使timeline的时间值仍在增加，player的时间值也不再变化了。  
-那么所谓的limiting，即是
+那么所谓的limiting，即是如果seeking当前时间点到player的结束时间之后，比如说5s的位置，实际的current time是不会增加的，而动画对象的表现也好像是暂停了一样，这个current time的位置被限制住了。反之也是一样，start time之前的时间点也是不能被seek到的。
+
+说了一些基本概念，接着说就无聊了，先来看一个demo，这样可以对API有一个直观的认识：
+
