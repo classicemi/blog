@@ -148,4 +148,15 @@ var und; //{7}
 
 第二行中，我们给已存在的变量赋予了新的值。JavaScript 不是一种强类型语言。也就是说你可以声明一个变量并初始化为一个数字，然后再将它重新赋值为一个字符串或任何数据类型。但将一个变量重新赋一个数据类型和它的初始数据类型不同的值也不是一个好习惯。
 
-第三行中，我们又声明了一个数字
+第三行中，我们又声明了一个数字，但是这次声明的是一个十进制浮点数。在第四行，我们声明了一个字符串；第五行，我们声明了一个布尔值；第六行，我们声明了一个`null`值；第七行，我们声明了一个`undefined`值。`null`代表没有值存在，而`undefined`代表一个变量已经被声明，但是还没有被赋予任何值：
+``` javascript
+console.log("num: "+ num);
+console.log("name: "+ name);
+console.log("trueValue: "+ trueValue);
+console.log("price: "+ price);
+console.log("nullVar: "+ nullVar);
+console.log("und: "+ und);
+```
+以上代码说明我们可以使用`console.log`来输出我们声明的每个变量的值。
+
+> 在本书的示例中，有三种可以输出 JavaScript 中的值的方法。第一种是使用`alert('My text here')语句，它会在浏览器的弹出对话框中显示输出的结果；第二种方式是使用`console.log('My text here')`，它会在调试工具的Console标签页显示输出结果（Google Developer Tools 或者 Firebug，根据你使用的浏览器而定）。最后，第三种方法是使用`document.write('My text here')`，将输出直接显示在 HTML 页面上。你可以使用你最习惯的方式。
