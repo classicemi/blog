@@ -159,4 +159,4 @@ console.log("und: "+ und);
 ```
 以上代码说明我们可以使用`console.log`来输出我们声明的每个变量的值。
 
-> 在本书的示例中，有三种可以输出 JavaScript 中的值的方法。第一种是使用`alert('My text here')语句，它会在浏览器的弹出对话框中显示输出的结果；第二种方式是使用`console.log('My text here')`，它会在调试工具的Console标签页显示输出结果（Google Developer Tools 或者 Firebug，根据你使用的浏览器而定）。最后，第三种方法是使用`document.write('My text here')`，将输出直接显示在 HTML 页面上。你可以使用你最习惯的方式。
+> 在本书的示例中，有三种可以输出 JavaScript 中的值的方法。第一种是使用`alert('My text here')`语句，它会在浏览器的弹出对话框中显示输出的结果；第二种方式是使用`console.log('My text here')`，它会在调试工具的Console标签页显示输出结果（Google Developer Tools 或者 Firebug，根据你使用的浏览器而定）。最后，第三种方法是使用`document.write('My text here')`，将输出直接显示在 HTML 页面上。你可以使用你最习惯的方式。
