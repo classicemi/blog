@@ -5,6 +5,7 @@
 - 2015.01.30 [求到一系列坐标距离和最小坐标的实现](https://github.com/classicemi/blog/issues/8)
 - 2014.12.08 [相等判断在underscore中的实现](https://github.com/classicemi/blog/issues/7)
 - 2014.12.01 [随机排列数组在underscore的实现](https://github.com/classicemi/blog/issues/6)
+- 2014.11.26 [苏宁V购总结，现有开发模式思考](https://github.com/classicemi/blog/blob/master/vgou.md)
 - 2014.10.31 [近期的一些思考](https://github.com/classicemi/blog/issues/5)
 - 2014.10.27 [D2 前端技术论坛流水账](https://github.com/classicemi/blog/issues/4)
 - 2014.10.22 [消除疑问：CSS动画 VS JavaScript](https://github.com/classicemi/blog/issues/3)
