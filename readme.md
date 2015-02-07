@@ -1,4 +1,4 @@
-**所有博客位于issue中，可以label作为tag进行检索**
+**所有博客位于issues中，可以label作为tag进行检索**
 
 ##博文目录:
 
