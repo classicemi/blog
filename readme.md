@@ -2,6 +2,7 @@
 
 ##博文目录:
 
+- 2015.04.29 [Node.js 自动猜单词程序的实现](https://github.com/classicemi/blog/issues/11)
 - 2015.04.08 [JavaScript 中继承实现方式归纳](https://github.com/classicemi/blog/issues/10)
 - 2015.01.30 [求到一系列坐标距离和最小坐标的实现](https://github.com/classicemi/blog/issues/8)
 - 2014.12.08 [相等判断在underscore中的实现](https://github.com/classicemi/blog/issues/7)
