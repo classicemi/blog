@@ -1,6 +1,7 @@
 **所有博客位于issues中，可以label作为tag进行检索**
 
 ##博文目录:
+- 2016.04.18 [Angular.js 异步执行相关方法实现](https://github.com/classicemi/blog/issues/14)
 - 2015.11.05 [让函数进化](https://github.com/classicemi/blog/issues/13)
 - 2015.05.26 [CSS 中的 Viewport Units](https://github.com/classicemi/blog/issues/12)
 - 2015.04.29 [Node.js 自动猜单词程序的实现](https://github.com/classicemi/blog/issues/11)
