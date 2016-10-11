@@ -83,3 +83,7 @@ filteredValue 赋值用三目运算符优化
 ## [cf1732b] refactor
 
 增加了一个 directive.js 文件，新增 Directive 类。
+
+去掉构造函数内部 bindings 变量。去掉 `processNode` 函数，增加原型方法 `compileNode`。在该方法内部，和原来的 `processNode` 函数一样，包装了一个 directive 对象，将记录了 attr 的 name 和 value 的对象传入 Directive.parse 方法。
+
+在 parse 方法中，判断出 attr 的 name 匹配到内置 directive 并且 attr 的有效值（| 符号前面部分）不为空的话，则构造出一个 Directive 类的实例并返回。这保证每个 directive 实例的结构都是一样的。
