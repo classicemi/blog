@@ -1,7 +1,6 @@
 **所有博客位于issues中，可以label作为tag进行检索**
 
 ##博文目录:
-- 2016.10.11 [Vue.js Source Code Learning](https://github.com/classicemi/blog/issues/16)
 - 2016.05.11 [JavaScript 模块加载器中的 tree-shaking](https://github.com/classicemi/blog/issues/15)
 - 2016.04.18 [Angular.js 异步执行相关方法实现](https://github.com/classicemi/blog/issues/14)
 - 2015.11.05 [让函数进化](https://github.com/classicemi/blog/issues/13)
