@@ -147,5 +147,19 @@ Seed 构造函数上加属性 config，将配置保存在里面，构建一个 `
 
 可通过 `Seed.filter()` 和 `Seed.directive()` 新增 filter 和 directive。
 
-Seed 类新增一个 extend 静态方法，
+Seed 类新增一个 extend 静态方法，返回一个新构造函数，内部调用实际的 Seed 构造函数。代码中提到 this 上会有一个 extension 属性，这实际上是在 `this.prototype` 上的属性，保存传入 opts 的属性，在执行构造函数生成实例的时候会一次性将这些属性绑定到 scope 上触发 setter。
+
+## [952ab43] kinda working now.
+
+去掉 on 指令中将 handler bind 到 `this.el` 上的操作。
+
+## [3149839] sd-each-* works
+
+好像又不用 `Seed.extend` 返回构造函数了，直接 `new Seed(opts)` 了，囧
+
+在 Seed 构造函数中直接 querySelector el 出来，`this.el = el`
+
+`this._compileNode()` 方法中专门针对 textNode 调用 `this._compileTextNode()` 进行处理，方法逻辑还没写。
+
+
 
