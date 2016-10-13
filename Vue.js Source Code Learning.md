@@ -115,3 +115,37 @@ on 指令对事件绑定的逻辑在 directive.js 文件中 on 指令的 update 
 
 directives.js 中增加了 each 指令，和一个 `augmentArray` 工具方法，但没有实现完整的功能。
 
+## [79760c0] WIP
+
+这个 commit 的 dev.html 都跑不起来，囧
+
+将 Seed 类独立成文件，Seed 类逻辑没有什么变化。
+
+增加 config.js 文件，prefix 配置在里面。
+
+Directive 构造函数中运行 filter 的部分，写入 this.filter 数组的 filter 对象增加 name 属性，未知 filter 可报错。
+
+main.js 的 export 有些变化，暴露 `seed` 方法用于保存 id 和 opts 的对应关系，`plant` 方法用于遍历并 bootstrap 各个组件。
+
+增加 watchArray.js，重写了数组的各种原型方法，为监听数组数据做准备。
+
+增加 each 指令，对传入 each 指令的 collection 数组增加各种数组原型方法，不再使用继承的方法，闭包访问传入的 callback，`watchArray` 方法向 callback 传入 mutation：
+
+``` javascript
+{
+  event: method,
+  args: slice.call(arguments), // 传给 callback 的参数
+  array: arr // collection
+}
+```
+
+## [5ce3b82] refactor
+
+重构。
+
+Seed 构造函数上加属性 config，将配置保存在里面，构建一个 `config.selector` 属性保存所有匹配内置指令的选择器字符串。
+
+可通过 `Seed.filter()` 和 `Seed.directive()` 新增 filter 和 directive。
+
+Seed 类新增一个 extend 静态方法，
+
