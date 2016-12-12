@@ -22,7 +22,7 @@ cooking.set({
   postcss: [
     // require('...')
   ],
-  publicPath: '/',
+  publicPath: '/blog/',
   assetsPath: 'static',
   urlLoaderLimit: 10000,
   extractCSS: '[name].[contenthash:7].css',
