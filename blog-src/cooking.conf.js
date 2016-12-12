@@ -22,7 +22,7 @@ cooking.set({
   postcss: [
     // require('...')
   ],
-  publicPath: '/docs/',
+  publicPath: 'https://raw.githubusercontent.com/classicemi/blog/master/docs/',
   assetsPath: 'static',
   urlLoaderLimit: 10000,
   extractCSS: '[name].[contenthash:7].css',
