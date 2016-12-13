@@ -6,7 +6,8 @@
     <title>docs</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+    </div>
     <!-- built files will be auto injected -->
   </body>
 </html>

@@ -1,7 +1,6 @@
 <template>
   <div>
-    <h1>docs</h1>
-    <p>A vue project.</p>
+    <router-view></router-view>
   </div>
 </template>
 
