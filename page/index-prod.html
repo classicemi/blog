@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>blog-page</title>
+    <link href="<%=htmlWebpackPlugin.files.chunks.app.css[0]%>" rel="stylesheet">
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="<%=htmlWebpackPlugin.files.chunks.manifest.entry%>"></script>
+    <script src="<%=htmlWebpackPlugin.files.chunks.vendor.entry%>"></script>
+    <script src="<%=htmlWebpackPlugin.files.chunks.app.entry%>"></script>
+  </body>
+</html>
