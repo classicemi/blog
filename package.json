@@ -1,12 +1,12 @@
 {
-  "name": "blog-page",
+  "name": "blog",
   "version": "1.0.0",
-  "description": "A Vue.js project",
+  "description": "my personal blog",
   "author": "classicemi <wushuang_1227@163.com>",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
-    "build": "rm -rf ../docs && node build/build.js"
+    "build": "rm -rf docs && node build/build.js"
   },
   "dependencies": {
     "superagent": "^3.2.1",
