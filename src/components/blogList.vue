@@ -3,7 +3,7 @@
     blog
     <ul>
       <li v-for="blog in blogList" v-if="blog.state === 'open'">
-        {{blog.title}}
+        <router-link :to="{ name: 'blog', params: { id: blog.number } }">{{blog.title}}</router-link>
       </li>
     </ul>
   </div>
@@ -12,6 +12,7 @@
 <script>
 export default {
   data() {
+    document.title = 'Orange\'s Blog';
     return {
       blogList: []
     }

@@ -10,5 +10,8 @@ const header = {
 export default {
   blogList() {
     return request.get(`${base}/repos/${owner}/${repo}/issues?state=all`).set(header)
+  },
+  blog(id) {
+    return request.get(`${base}/repos/${owner}/${repo}/issues/${id}`).set(header)
   }
 }
