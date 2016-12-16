@@ -4,6 +4,12 @@
     <meta charset="utf-8">
     <title>blog-page</title>
     <link href="<%=htmlWebpackPlugin.files.chunks.app.css[0]%>" rel="stylesheet">
+    <script type="text/javascript">
+      var host = "classicemi.com";
+      if ((host === window.location.host) && (window.location.protocol != "https:")) {
+        window.location.protocol = "https:";
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>

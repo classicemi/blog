@@ -1,9 +1,15 @@
 <template>
   <div class="blog-list">
-    blog
-    <ul>
-      <li v-for="blog in blogList" v-if="blog.state === 'open'">
-        <router-link :to="{ name: 'blog', params: { id: blog.number } }">{{blog.title}}</router-link>
+    <h1 class="title">
+      <span>Orange</span>
+    </h1>
+    <p class="motto">
+      all work and no play makes jack a dull boy
+    </p>
+    <ul class="list">
+      <li v-for="blog in blogList" v-if="blog.state === 'open' && !blog.pull_request">
+        <router-link :to="{ name: 'blog', params: { id: blog.number } }" class="blog-title">{{blog.title}}</router-link>
+        <p class="created-at">{{blog.created_at | date}}</p>
       </li>
     </ul>
   </div>
@@ -22,6 +28,15 @@ export default {
       return this.$store.getters.blogList
     }
   },
+  filters: {
+    date(dateStr) {
+      const date = new Date(dateStr)
+      const year = date.getFullYear()
+      const month = date.getMonth() + 1
+      const day = date.getDate()
+      return `${year}-${month}-${day}`
+    }
+  },
   beforeMount() {
     this.loadBlogs()
   },
@@ -33,5 +48,44 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.blog-list {
+  padding-top: 5rem;
+}
+
+.title {
+  text-align: center;
+  > span {
+    display: inline-block;
+    padding: 0 .4rem .1rem;
+    background: red;
+    font-style: italic;
+    color: white;
+  }
+}
+
+.motto {
+  margin-top: .3rem;
+  text-align: center;
+}
+
+.list {
+  margin-top: 4rem;
+  > li {
+    &:after {
+      content: '';
+      display: block;
+    }
+  }
+  .blog-title {
+    display: block;
+    color: #000;
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-align: center;
+  }
+  .created-at {
+    text-align: center;
+  }
+}
 </style>

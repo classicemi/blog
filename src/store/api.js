@@ -13,5 +13,15 @@ export default {
   },
   blog(id) {
     return request.get(`${base}/repos/${owner}/${repo}/issues/${id}`).set(header)
+  },
+  markdown(text) {
+    const params = {
+      text,
+      mode: 'gfm',
+      context: `${owner}/${repo}`
+    }
+    return request.post(`${base}/markdown`)
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify(params))
   }
 }

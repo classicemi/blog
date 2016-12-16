@@ -1,6 +1,7 @@
 <template>
   <div class="blog">
-    {{activeBlog}}
+    <div v-html="activeBlog.content">
+    </div>
   </div>
 </template>
 

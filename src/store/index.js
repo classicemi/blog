@@ -27,8 +27,13 @@ const store = new Vuex.Store({
         commit('SET_ACTIVE_BLOG', JSON.parse(cache))
       }
       return api.blog(id).then(res => {
-        localStorage.setItem(`blog-issue-${id}`, JSON.stringify(res.body))
-        commit('SET_ACTIVE_BLOG', res.body)
+        const activeBlog = res.body
+        const markdownText = res.body.body
+        return api.markdown(markdownText).then(markdownResponse => {
+          activeBlog.content = markdownResponse.text
+          localStorage.setItem(`blog-issue-${id}`, JSON.stringify(activeBlog))
+          commit('SET_ACTIVE_BLOG', activeBlog)
+        })
       })
     },
     CLEAR_ACTIVE_BLOG({ commit }) {
