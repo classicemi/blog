@@ -48,6 +48,7 @@
     "webpack": "^1.13.2",
     "webpack-dev-middleware": "^1.8.3",
     "webpack-hot-middleware": "^2.12.2",
+    "webpack-manifest-plugin": "^1.1.0",
     "webpack-merge": "^0.14.1"
   },
   "engines": {

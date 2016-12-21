@@ -63,6 +63,7 @@ export default {
       padding: 1rem;
       line-height: 1.5em;
       background-color: #eee;
+      overflow-x: auto;
       code {
         color: inherit;
         background-color: transparent;
