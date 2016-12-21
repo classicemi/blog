@@ -1,11 +1,5 @@
 <template>
   <div class="blog-list">
-    <h1 class="title">
-      <span>Orange</span>
-    </h1>
-    <p class="motto">
-      all work and no play makes jack a dull boy
-    </p>
     <ul class="list">
       <li v-for="blog in blogList" v-if="blog.state === 'open' && !blog.pull_request">
         <router-link :to="{ name: 'blog', params: { id: blog.number } }" class="blog-title">{{blog.title}}</router-link>
@@ -49,43 +43,34 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.blog-list {
-  padding-top: 5rem;
-}
-
-.title {
-  text-align: center;
-  > span {
-    display: inline-block;
-    padding: 0 .4rem .1rem;
-    background: red;
-    font-style: italic;
-    color: white;
-  }
-}
-
-.motto {
-  margin-top: .3rem;
-  text-align: center;
-}
-
 .list {
-  margin-top: 4rem;
+  margin-top: 3rem;
   > li {
-    &:after {
+    position: relative;
+    margin: 0 0 1.4rem 0;
+    padding: 2rem 0 0 0;
+    &:not(:first-child):before {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      margin-left: -7.5rem;
       content: '';
       display: block;
+      width: 15rem;
+      height: 1px;
+      background-color: #e0e0e0;
     }
   }
   .blog-title {
     display: block;
     color: #000;
-    font-size: 1.3rem;
+    font-size: 1.8rem;
     font-weight: bold;
     text-align: center;
   }
   .created-at {
     text-align: center;
+    font-size: 1.3rem;
   }
 }
 </style>

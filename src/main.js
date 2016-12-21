@@ -8,12 +8,12 @@ import store from './store'
 
 import './style/main.css'
 
-const resetRootFontSize = () => {
-  const clientWidth = document.body.clientWidth
-  document.documentElement.style.fontSize = 10 * (clientWidth / 375) + 'px'
-}
-resetRootFontSize()
-window.addEventListener('resize', resetRootFontSize)
+// const resetRootFontSize = () => {
+//   const clientWidth = document.body.clientWidth
+//   document.documentElement.style.fontSize = 10 * (clientWidth / 375) + 'px'
+// }
+// resetRootFontSize()
+// window.addEventListener('resize', resetRootFontSize)
 
 Vue.use(VueRouter)
 

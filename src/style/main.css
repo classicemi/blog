@@ -4,10 +4,13 @@ html, body, h1, h2, h3, h4, h5, h6, p, ul, ol {
 }
 
 html {
+  position: relative;
   font-size: 62.5%;
+  min-height: 100%;
 }
 
 body {
+  min-height: 100%;
   font-family: PingFang SC,Lantinghei SC,Helvetica Neue,Microsoft Yahei,Hiragino Sans GB,Microsoft Sans Serif,WenQuanYi Micro Hei,sans;
   min-width: 300px;
   color: #000;

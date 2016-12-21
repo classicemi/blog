@@ -7,7 +7,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     blogList: [],
-    activeBlog: null
+    activeBlog: {}
   },
 
   actions: {
@@ -49,7 +49,7 @@ const store = new Vuex.Store({
       state.activeBlog = blog
     },
     CLEAR_ACTIVE_BLOG(state) {
-      state.activeBlog = null
+      state.activeBlog = {}
     }
   },
 

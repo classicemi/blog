@@ -3,6 +3,7 @@ import blog from './components/blog'
 
 const routes = [
   {
+    name: 'root',
     path: '/',
     redirect: '/blogs'
   },
