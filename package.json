@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
-    "build": "rm -rf docs && node build/build.js"
+    "build": "rm -rf `ls docs/* | egrep -v CNAME` && node build/build.js"
   },
   "dependencies": {
     "superagent": "^3.2.1",
