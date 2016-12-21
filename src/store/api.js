@@ -22,6 +22,7 @@ export default {
     }
     return request.post(`${base}/markdown`)
         .set('Content-Type', 'application/json')
+        .set(header)
         .send(JSON.stringify(params))
   }
 }
