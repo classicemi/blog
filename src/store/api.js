@@ -2,7 +2,7 @@ import request from 'superagent'
 import { owner, repo } from '../config.json'
 
 const base = `https://api.github.com`
-const token = window.btoa(`${owner}:85b8f9dc6a7a94bf6f8408e7ac5510bdd2ea91f2`)
+const token = window.btoa(`${owner}:41db639374e2b3a0ab5e46147fcffa59f2170fba`)
 const header = {
   Authorization: `Basic ${token}`
 }
