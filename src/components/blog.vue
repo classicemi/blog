@@ -8,6 +8,10 @@
 </template>
 
 <script>
+import {
+  wechatShare
+} from '../utils'
+
 export default {
   data() {
     return {
@@ -17,7 +21,17 @@ export default {
   },
   computed: {
     activeBlog() {
-      return this.$store.getters.activeBlog
+      const activeBlog = this.$store.getters.activeBlog
+      wechatShare({
+        title: `${activeBlog.title} | Orange's Blog`,
+        link: document.href
+      })
+      if (activeBlog.title) {
+        document.title = `${activeBlog.title} | Orange's Blog`
+      } else {
+        document.title = 'Orange\'s Blog'
+      }
+      return activeBlog
     }
   },
   beforeMount() {
