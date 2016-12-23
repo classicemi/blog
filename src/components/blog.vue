@@ -1,5 +1,8 @@
 <template>
   <div class="blog">
+    <h1 class="title">
+      {{activeBlog.title}}
+    </h1>
     <div v-html="activeBlog.content" class="content"></div>
   </div>
 </template>
@@ -36,19 +39,37 @@ export default {
 
 <style lang="scss">
 .blog {
-  margin-top: 3rem;
+  max-width: 800px;
+  margin: 3rem auto 0;
   padding: 0 1rem;
   font-size: 1.4rem;
   line-height: 1.8em;
+  .title {
+    text-align: center;
+    margin: 4rem 0 2rem;
+  }
   .content {
-    a {
-      color: #4078c0;
-    }
     p {
       margin-bottom: 1.2rem;
     }
     h1, h2, h3, h4, h5, h6 {
       margin-bottom: .3rem;
+    }
+    ul {
+      li {
+        &:before {
+          content: '🔹';
+          margin-right: .7rem;
+          vertical-align: middle;
+        }
+      }
+    }
+    blockquote {
+      margin: 0 0 1.2rem 0;
+      padding: .3rem 1rem;
+      border-left: 4px solid #ccc;
+      background-color: #eee;
+      color: #666;
     }
     code, pre {
       font-family: 'Source Code Pro', Monaco, Consolas, monospace;

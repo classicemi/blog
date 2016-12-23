@@ -1,7 +1,10 @@
 <template>
   <div class="footer">
     <p>
-      Proudly powered by <a target="_blank" href="https://github.com/classicemi">myself</a>
+      Proudly powered by
+      <a target="_blank" href="https://github.com/classicemi">myself</a>
+      and
+      <a target="_blank" href="https://developer.github.com/v3/">GitHub API</a>
     </p>
     <p>
       © 2016 classicemi

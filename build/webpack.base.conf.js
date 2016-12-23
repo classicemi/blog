@@ -10,7 +10,6 @@ var cssSourceMapDev = (env === 'development' && config.dev.cssSourceMap)
 var cssSourceMapProd = (env === 'production' && config.build.productionSourceMap)
 var useCssSourceMap = cssSourceMapDev || cssSourceMapProd
 var FaviconsWebpackPlugin = require('favicons-webpack-plugin')
-var ManifestWebpackPlugin = require('webpack-manifest-plugin')
 
 module.exports = {
   entry: {
@@ -35,25 +34,22 @@ module.exports = {
     fallback: [path.join(__dirname, '../node_modules')]
   },
   plugins: [
-    new FaviconsWebpackPlugin({
-      logo: 'assets/favicon.ico',
-      inject: true,
-      icons: {
-        android: true,
-        appleIcon: true,
-        appleStartup: true,
-        coast: false,
-        favicons: true,
-        firefox: true,
-        opengraph: false,
-        twitter: false,
-        yandex: false,
-        windows: false
-      }
-    }),
-    new ManifestWebpackPlugin({
-      fileName: 'manifest.json'
-    })
+    // new FaviconsWebpackPlugin({
+    //   logo: 'assets/favicon.ico',
+    //   inject: true,
+    //   icons: {
+    //     android: true,
+    //     appleIcon: true,
+    //     appleStartup: true,
+    //     coast: false,
+    //     favicons: true,
+    //     firefox: true,
+    //     opengraph: false,
+    //     twitter: false,
+    //     yandex: false,
+    //     windows: false
+    //   }
+    // })
   ],
   module: {
     loaders: [
